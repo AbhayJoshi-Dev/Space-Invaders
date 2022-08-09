@@ -1,12 +1,9 @@
-#include<iostream>
-#include<SDL.h>
-#include<SDL_image.h>
+#include"Game.h"
 
 int main(int argc, char* args[])
 {
-	std::cout << "Hello!" << std::endl;
-
-	std::cin.get();
+	Game game;
+	game.GameLoop();
 
 	return 0;
 }
