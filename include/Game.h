@@ -5,6 +5,7 @@
 #include<SDL_image.h>
 
 #include"Utils.h"
+#include"AssetManager.h"
 
 class Game
 {
@@ -22,6 +23,8 @@ private:
 
 	bool quit;
 	SDL_Event m_event;
+
+	std::unique_ptr<AssetManager> m_assetManager;
 
 	const float TIMESTEP = 0.01f;
 	float m_accumulator = 0.f;

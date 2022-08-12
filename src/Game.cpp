@@ -1,6 +1,7 @@
 #include"Game.h"
 
 Game::Game()
+	:m_assetManager(std::make_unique<AssetManager>())
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		std::cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
@@ -12,6 +13,8 @@ Game::Game()
 	CreateWindow("Space Invaders", 1280, 720);
 
 	quit = false;
+
+	m_assetManager->Load(m_renderer, "Player", "res/gfx/Player.png");
 }
 
 Game::~Game()
