@@ -1,8 +1,10 @@
 #include"Entity.h"
 
-Entity::Entity(const Vector& pos, SDL_Texture* tex)
-	:m_position(pos), m_texture(tex)
+Entity::Entity(const AssetManager& assetManager, const Vector& pos, const std::string& key)
+	:m_position(pos)
 {
+	m_texture = assetManager.Get(key);
+
 	m_textureRect.x = 0;
 	m_textureRect.y = 0;
 
@@ -20,6 +22,11 @@ void Entity::Update()
 }
 
 void Entity::Render(SDL_Renderer* renderer)
+{
+
+}
+
+void Entity::HandleEvents(SDL_Event& event)
 {
 
 }

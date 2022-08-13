@@ -3,9 +3,12 @@
 #include<iostream>
 #include<SDL.h>
 #include<SDL_image.h>
+#include<vector>
 
 #include"Utils.h"
 #include"AssetManager.h"
+#include"Entity.h"
+#include"Player.h"
 
 class Game
 {
@@ -25,6 +28,8 @@ private:
 	SDL_Event m_event;
 
 	std::unique_ptr<AssetManager> m_assetManager;
+
+	Player m_player;
 
 	const float TIMESTEP = 0.01f;
 	float m_accumulator = 0.f;

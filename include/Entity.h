@@ -3,17 +3,18 @@
 #include<SDL.h>
 
 #include"Vector.h"
+#include"AssetManager.h"
 
 class Entity
 {
 public:
-	Entity(const Vector& pos, SDL_Texture* tex);
+	Entity(const AssetManager& assetManager, const Vector& pos, const std::string& key);
 	~Entity();
-	void Update();
-	void Render(SDL_Renderer* renderer);
-private:
-
+	virtual void Update();
+	virtual void Render(SDL_Renderer* renderer);
+	virtual void HandleEvents(SDL_Event& event);
+protected:
+	SDL_Rect m_textureRect;
 	Vector m_position;
 	SDL_Texture* m_texture;
-	SDL_Rect m_textureRect;
 };

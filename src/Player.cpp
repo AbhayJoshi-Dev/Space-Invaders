@@ -1,7 +1,34 @@
 #include"Player.h"
 
-Player::Player(const Vector& pos, SDL_Texture* tex)
-	:Entity(pos, tex)
+Player::Player(const AssetManager& assetManager, const Vector& pos, const std::string& key)
+	:Entity(assetManager, pos, key)
+{
+
+}
+
+void Player::Update()
+{
+
+}
+
+void Player::Render(SDL_Renderer* renderer)
+{
+	SDL_Rect src;
+	src.x = 0;
+	src.y = 0;
+	src.w = m_textureRect.w;
+	src.h = m_textureRect.h;
+
+	SDL_Rect dst;
+	dst.x = m_position.GetX();
+	dst.y = m_position.GetY();
+	dst.w = src.w;
+	dst.h = src.h;
+
+	SDL_RenderCopy(renderer, m_texture, &src, &dst);
+}
+
+void Player::HandleEvents(SDL_Event& event)
 {
 
 }
