@@ -1,7 +1,7 @@
 #include"Entity.h"
 
-Entity::Entity(const AssetManager& assetManager, const Vector& pos, const std::string& key)
-	:m_position(pos)
+Entity::Entity(const AssetManager& assetManager, const Vector& pos, const std::string& key, const float& scale)
+	:m_position(pos), m_scale(scale)
 {
 	m_texture = assetManager.Get(key);
 

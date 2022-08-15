@@ -28,8 +28,9 @@ private:
 	SDL_Event m_event;
 
 	std::unique_ptr<AssetManager> m_assetManager;
+	std::vector<std::unique_ptr<Entity>> m_entities;
 
-	Player m_player;
+	//Player m_player;
 
 	const float TIMESTEP = 0.01f;
 	float m_accumulator = 0.f;

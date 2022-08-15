@@ -1,7 +1,7 @@
 #include"Game.h"
 
 Game::Game()
-	:m_assetManager(std::make_unique<AssetManager>()), m_player(*m_assetManager, Vector(0.f, 0.f), "Player")
+	:m_assetManager(std::make_unique<AssetManager>())
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		std::cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
@@ -16,6 +16,7 @@ Game::Game()
 
 	m_assetManager->Load(m_renderer, "Player", "res/gfx/Player.png");
 
+	m_entities.push_back(std::make_unique<Player>(*m_assetManager, Vector(0.f, 0.f), "Player", 3.f));
 	
 }
 
@@ -77,14 +78,18 @@ void Game::GameLoop()
 void Game::Update()
 {
 	utils::PrintFps();
+	for (auto& entity : m_entities)
+		entity->Update();
 }
 
 void Game::Render()
 {
 	SDL_RenderClear(m_renderer);
 
-	m_player.Render(m_renderer);
-		
+	for (auto& entity : m_entities)
+	{
+		entity->Render(m_renderer);
+	}
 
 	SDL_RenderPresent(m_renderer);
 }
