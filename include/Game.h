@@ -9,6 +9,7 @@
 #include"AssetManager.h"
 #include"Entity.h"
 #include"Player.h"
+#include"Projectile.h"
 
 class Game
 {

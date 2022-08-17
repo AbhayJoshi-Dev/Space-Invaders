@@ -16,7 +16,7 @@ Game::Game()
 
 	m_assetManager->Load(m_renderer, "Player", "res/gfx/Player.png");
 
-	m_entities.push_back(std::make_unique<Player>(*m_assetManager, Vector(0.f, 0.f), "Player", 3.f));
+	m_entities.push_back(std::make_unique<Player>(*m_assetManager, Vector(200.f, 650.f), "Player", 3.5f));
 	
 }
 
@@ -59,11 +59,17 @@ void Game::GameLoop()
 			{
 				if (m_event.type == SDL_QUIT)
 					quit = true;
+
+				
+
 			}
 
 			m_accumulator -= TIMESTEP;
 		}
 		m_alpha = m_accumulator / TIMESTEP;
+
+		for (auto& entity : m_entities)
+			entity->HandleEvents(m_event);
 
 		Update();
 		Render();

@@ -1,14 +1,14 @@
 #include"Player.h"
 
 Player::Player(const AssetManager& assetManager, const Vector& pos, const std::string& key, const float& scale)
-	:Entity(assetManager, pos, key, scale)
+	:Entity(assetManager, pos, key, scale), m_moveSpeed(4.5f)
 {
 
 }
 
 void Player::Update()
 {
-	std::cout << "Player" << std::endl;
+
 }
 
 void Player::Render(SDL_Renderer* renderer)
@@ -29,11 +29,15 @@ void Player::Render(SDL_Renderer* renderer)
 }
 
 void Player::HandleEvents(SDL_Event& event)
-{
+{		
+	const Uint8* keystate = SDL_GetKeyboardState(NULL);
 
-}
-
-void Player::test()
-{
-
+	if (keystate[SDL_SCANCODE_D] || keystate[SDL_SCANCODE_RIGHT])
+	{
+		m_position.SetX(m_position.GetX() + m_moveSpeed);
+	}
+	if (keystate[SDL_SCANCODE_A] || keystate[SDL_SCANCODE_LEFT])
+	{
+		m_position.SetX(m_position.GetX() - m_moveSpeed);
+	}
 }
