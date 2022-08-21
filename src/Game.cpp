@@ -59,9 +59,6 @@ void Game::GameLoop()
 			{
 				if (m_event.type == SDL_QUIT)
 					quit = true;
-
-				
-
 			}
 
 			m_accumulator -= TIMESTEP;
@@ -98,4 +95,9 @@ void Game::Render()
 	}
 
 	SDL_RenderPresent(m_renderer);
+}
+
+void Game::PlayerFiring()
+{
+	m_entities.push_back(std::make_unique<Projectile>(*m_assetManager, Vector(0.f, 0.f), Vector(0.f, 0.f), "", 2.f));
 }

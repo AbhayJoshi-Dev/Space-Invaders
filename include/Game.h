@@ -20,6 +20,7 @@ public:
 	void GameLoop();
 	void Update();
 	void Render();
+	void PlayerFiring();
 
 private:
 	SDL_Window* m_window;
