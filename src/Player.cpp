@@ -1,11 +1,17 @@
 #include"Player.h"
 
-Player::Player(const AssetManager& assetManager, const Vector& pos, const std::string& key, const float& scale)
-	:Entity(assetManager, pos, key, scale), m_moveSpeed(4.5f)
+Player::Player(SDL_Texture* tex, const Vector& pos, const float& scale)
+	:Entity(tex, pos, scale), m_moveSpeed(4.5f)
 {
 	isfiring = false;
 	m_fireCooldown = 5.f;
 	m_counter = 0.f;
+
+}
+
+void Player::SetTexture(SDL_Texture* tex)
+{
+	ESetTexture(tex);
 }
 
 void Player::Update()
@@ -46,11 +52,5 @@ void Player::HandleEvents(SDL_Event& event)
 	if (keystate[SDL_SCANCODE_A] || keystate[SDL_SCANCODE_LEFT])
 	{
 		m_position.SetX(m_position.GetX() - m_moveSpeed);
-	}
-
-	if (keystate[SDL_SCANCODE_X] && !isfiring)
-	{
-		isfiring = true;
-		std::cout << "Fire" << std::endl;
 	}
 }

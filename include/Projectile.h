@@ -6,7 +6,8 @@ class Projectile : public Entity
 {
 public:
 	Projectile(const AssetManager& assetManager, const Vector& pos, const Vector& velocity, const std::string& key, float scale);
-	void Update();
+	void Update() override;
+	void Render(SDL_Renderer* renderer) override;
 private:
 	Vector m_velocity;
 	float m_bulletSpeed;

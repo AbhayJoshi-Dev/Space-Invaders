@@ -9,7 +9,8 @@
 class Player : public Entity
 {
 public:
-	Player(const AssetManager& assetManager, const Vector& pos, const std::string& key, const float& scale);
+	Player(SDL_Texture* tex, const Vector& pos, const float& scale);
+	void SetTexture(SDL_Texture* tex);
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
 	void HandleEvents(SDL_Event& event) override;
