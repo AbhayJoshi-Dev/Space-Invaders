@@ -1,27 +1,15 @@
 #include"Player.h"
 
-Player::Player(SDL_Texture* tex, const Vector& pos, const float& scale)
-	:Entity(tex, pos, scale), m_moveSpeed(4.5f)
+Player::Player(const Vector& pos, const std::string& key, const float& scale)
+	:Entity(pos, key, scale), m_moveSpeed(4.5f), m_projectile(Vector(0.f, 0.f), Vector(0.f, 0.f), "Projectile", 3.5f)
 {
-	isfiring = false;
-	m_fireCooldown = 5.f;
-	m_counter = 0.f;
+	fire = false;
 
-}
-
-void Player::SetTexture(SDL_Texture* tex)
-{
-	ESetTexture(tex);
 }
 
 void Player::Update()
 {
-	m_counter += 0.05f;
-	if (m_counter >= m_fireCooldown)
-	{
-		m_counter = 0.f;
-		isfiring = false;
-	}
+
 }
 
 void Player::Render(SDL_Renderer* renderer)
@@ -53,4 +41,12 @@ void Player::HandleEvents(SDL_Event& event)
 	{
 		m_position.SetX(m_position.GetX() - m_moveSpeed);
 	}
+
+	if (keystate[SDL_SCANCODE_X])
+		Shoot();
+}
+
+void Player::Shoot()
+{
+
 }

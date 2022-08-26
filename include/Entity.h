@@ -9,10 +9,8 @@
 class Entity
 {
 public:
-	Entity(const AssetManager& assetManager, const Vector& pos, const std::string& key, const float& scale);
-	Entity(SDL_Texture* tex, const Vector& pos, const float& scale);
+	Entity(const Vector& pos, const std::string& key, const float& scale);
 	~Entity();
-	void ESetTexture(SDL_Texture* tex);
 	virtual void Update();
 	virtual void Render(SDL_Renderer* renderer);
 	virtual void HandleEvents(SDL_Event& event);

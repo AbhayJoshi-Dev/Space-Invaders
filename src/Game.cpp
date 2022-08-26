@@ -1,7 +1,7 @@
 #include"Game.h"
 
 Game::Game()
-	:m_assetManager(std::make_unique<AssetManager>()), m_player(NULL, Vector(200.f, 650.f), 3.5f)
+	//:m_player(Vector(200.f, 650.f), "Player", 3.5f)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		std::cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
@@ -14,15 +14,11 @@ Game::Game()
 
 	quit = false;
 
-	m_assetManager->Load(m_renderer, "Player", "res/gfx/Player.png");
-	m_assetManager->Load(m_renderer, "Projectile", "res/gfx/Projectile.png");
 
-	m_player.SetTexture(m_assetManager->Get("Player"));
-	//m_entities.push_back(std::make_unique<Player>(*m_assetManager, Vector(200.f, 650.f), "Player", 3.5f));
-	
-	fire = true;
-	m_fireCooldown = 10.0f;
-	m_counter = 0.f;
+	AssetManager::GetInstance().Load(m_renderer, "Player", "res/gfx/Player.png");
+	AssetManager::GetInstance().Load(m_renderer, "Projectile", "res/gfx/Projectile.png");
+
+	m_entities.push_back(std::make_unique<Player>(Vector(200.f, 650.f), "Player", 3.5f));
 
 }
 
@@ -71,12 +67,6 @@ void Game::GameLoop()
 		}
 		m_alpha = m_accumulator / TIMESTEP;
 
-		const Uint8* keystate = SDL_GetKeyboardState(NULL);
-		if (keystate[SDL_SCANCODE_X] && fire)
-		{
-			PlayerFiring();
-		}
-
 		Update();
 		Render();
 
@@ -97,15 +87,8 @@ void Game::Update()
 	for (auto& entity : m_entities)
 		entity->HandleEvents(m_event);
 
-	m_player.Update();
-	m_player.HandleEvents(m_event);
-
-	m_counter += 0.05f;
-	if (m_counter >= m_fireCooldown)
-	{
-		m_counter = 0.f;
-		fire = true;
-	}
+	//m_player.Update();
+	//m_player.HandleEvents(m_event);
 }
 
 void Game::Render()
@@ -117,14 +100,7 @@ void Game::Render()
 		entity->Render(m_renderer);
 	}
 
-	m_player.Render(m_renderer);
+	//m_player.Render(m_renderer);
 
 	SDL_RenderPresent(m_renderer);
-}
-
-void Game::PlayerFiring()
-{
-	fire = false;
-	m_entities.push_back(std::make_unique<Projectile>(*m_assetManager, Vector(m_player.m_position.GetX(), m_player.m_position.GetY()), Vector(0.f, -1.f), "Projectile", 3.5f));
-	std::cout << "Fire" << std::endl;
 }

@@ -20,7 +20,6 @@ public:
 	void GameLoop();
 	void Update();
 	void Render();
-	void PlayerFiring();
 
 private:
 	SDL_Window* m_window;
@@ -29,10 +28,8 @@ private:
 	bool quit;
 	SDL_Event m_event;
 
-	std::unique_ptr<AssetManager> m_assetManager;
+	//std::unique_ptr<AssetManager> m_assetManager;
 	std::vector<std::unique_ptr<Entity>> m_entities;
-
-	Player m_player;
 
 	const float TIMESTEP = 0.01f;
 	float m_accumulator = 0.f;
@@ -42,8 +39,4 @@ private:
 	float m_alpha = 0.f;
 	int m_startTicks;
 	int m_frameTicks;
-
-	bool fire;
-	float m_fireCooldown;
-	float m_counter;
 };

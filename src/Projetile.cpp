@@ -1,7 +1,7 @@
 #include"Projectile.h"
 
-Projectile::Projectile(const AssetManager& assetManager, const Vector& pos, const Vector& velocity, const std::string& key, float scale)
-	:Entity(assetManager, pos, key, scale)
+Projectile::Projectile(const Vector& pos, const Vector& velocity, const std::string& key, float scale)
+	:Entity(pos, key, scale)
 {
 	m_velocity = velocity;
 }

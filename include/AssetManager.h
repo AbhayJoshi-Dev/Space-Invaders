@@ -15,10 +15,13 @@ public:
 
 	AssetManager& operator=(const AssetManager&) = delete;
 
+	static AssetManager& GetInstance();
+
 	void Load(SDL_Renderer* renderer, const std::string& key, const std::string& filePath);
 
 	SDL_Texture* Get(const std::string& key) const;
 
+	SDL_Texture* LoadTexture(SDL_Renderer* renderer, const std::string& key, const std::string& filePath);
 private:
 
 	std::unordered_map < std::string, SDL_Texture*> m_assetMap;
