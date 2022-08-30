@@ -1,7 +1,6 @@
 #include"Game.h"
 
 Game::Game()
-	//:m_player(Vector(200.f, 650.f), "Player", 3.5f)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		std::cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
@@ -17,8 +16,10 @@ Game::Game()
 
 	AssetManager::GetInstance().Load(m_renderer, "Player", "res/gfx/Player.png");
 	AssetManager::GetInstance().Load(m_renderer, "Projectile", "res/gfx/Projectile.png");
+	AssetManager::GetInstance().Load(m_renderer, "Enemy", "res/gfx/Enemy1.png");
 
 	m_entities.push_back(std::make_unique<Player>(Vector(200.f, 650.f), "Player", 3.5f));
+	m_entities.push_back(std::make_unique<Enemy>(Vector(200.f, 100.f), "Enemy", 3.5f));
 
 }
 
@@ -87,8 +88,6 @@ void Game::Update()
 	for (auto& entity : m_entities)
 		entity->HandleEvents(m_event);
 
-	//m_player.Update();
-	//m_player.HandleEvents(m_event);
 }
 
 void Game::Render()
@@ -99,8 +98,6 @@ void Game::Render()
 	{
 		entity->Render(m_renderer);
 	}
-
-	//m_player.Render(m_renderer);
 
 	SDL_RenderPresent(m_renderer);
 }

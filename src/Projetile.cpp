@@ -4,6 +4,9 @@ Projectile::Projectile(const Vector& pos, const Vector& velocity, const std::str
 	:Entity(pos, key, scale)
 {
 	m_velocity = velocity;
+
+	m_texture = AssetManager::GetInstance().Get(key);
+	m_isDead = false;
 }
 
 void Projectile::Update()
@@ -20,10 +23,10 @@ void Projectile::Render(SDL_Renderer* renderer)
 	src.h = m_textureRect.h;
 
 	SDL_Rect dst;
-	dst.x = m_position.GetX();
-	dst.y = m_position.GetY();
-	dst.w = src.w * m_scale;
-	dst.h = src.h * m_scale;
+	dst.x = m_position.GetX() - m_textureRect.w / 2;
+	dst.y = m_position.GetY() - m_textureRect.h / 2;
+	dst.w = src.w;
+	dst.h = src.h;
 
 	SDL_RenderCopy(renderer, m_texture, &src, &dst);
 }

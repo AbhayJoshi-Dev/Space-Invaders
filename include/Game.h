@@ -10,6 +10,7 @@
 #include"Entity.h"
 #include"Player.h"
 #include"Projectile.h"
+#include"Enemy.h"
 
 class Game
 {
@@ -28,7 +29,6 @@ private:
 	bool quit;
 	SDL_Event m_event;
 
-	//std::unique_ptr<AssetManager> m_assetManager;
 	std::vector<std::unique_ptr<Entity>> m_entities;
 
 	const float TIMESTEP = 0.01f;

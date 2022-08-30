@@ -17,7 +17,7 @@ public:
 	void Shoot();
 private:
 	float m_moveSpeed;
-	bool fire;
+	bool m_isFired;
 
 	Projectile m_projectile;
 };

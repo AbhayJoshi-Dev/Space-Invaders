@@ -9,6 +9,9 @@ Entity::Entity(const Vector& pos, const std::string& key, const float& scale)
 	m_textureRect.y = 0;
 
 	SDL_QueryTexture(m_texture, NULL, NULL, &m_textureRect.w, &m_textureRect.h);
+
+	m_textureRect.w *= m_scale;
+	m_textureRect.h *= m_scale;
 }
 
 Entity::~Entity()
