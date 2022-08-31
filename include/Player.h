@@ -15,6 +15,8 @@ public:
 	void Render(SDL_Renderer* renderer) override;
 	void HandleEvents(SDL_Event& event) override;
 	void Shoot();
+	void CheckProjectileCollision(Entity& e);
+
 private:
 	float m_moveSpeed;
 	bool m_isFired;

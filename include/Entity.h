@@ -16,9 +16,9 @@ public:
 	virtual void HandleEvents(SDL_Event& event);
 public:
 	Vector m_position;
+	SDL_Rect m_textureRect;
 
 protected:
-	SDL_Rect m_textureRect;
 	SDL_Texture* m_texture;
 	float m_scale;
 };

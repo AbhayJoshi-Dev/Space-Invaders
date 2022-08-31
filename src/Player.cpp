@@ -1,7 +1,7 @@
 #include"Player.h"
 
 Player::Player(const Vector& pos, const std::string& key, const float& scale)
-	:Entity(pos, key, scale), m_moveSpeed(4.5f), m_projectile(Vector(0.f, 0.f), Vector(0.f, -5.f), "Projectile", 3.5f)
+	:Entity(pos, key, scale), m_moveSpeed(4.5f), m_projectile(Vector(0.f, 0.f), Vector(0.f, -1.f), "Projectile", 3.5f)
 {
 	m_isFired = false;
 
@@ -22,8 +22,8 @@ void Player::Render(SDL_Renderer* renderer)
 	src.h = m_textureRect.h;
 
 	SDL_Rect dst;
-	dst.x = m_position.GetX() - m_textureRect.w / 2;
-	dst.y = m_position.GetY() - m_textureRect.h / 2;
+	dst.x = m_position.GetX() * m_scale - m_textureRect.w / 2 ;
+	dst.y = m_position.GetY() * m_scale - m_textureRect.h / 2 ;
 	dst.w = src.w;
 	dst.h = src.h;
 
@@ -55,4 +55,12 @@ void Player::Shoot()
 {
 	m_isFired = true;
 	m_projectile.m_position = Vector(m_position.GetX(), m_position.GetY() - m_textureRect.h / 2);
+}
+
+void Player::CheckProjectileCollision(Entity& e)
+{
+	if (utils::RectIntersect(e, m_projectile))
+	{
+		std::cout << "Collision" << std::endl;
+	}
 }
