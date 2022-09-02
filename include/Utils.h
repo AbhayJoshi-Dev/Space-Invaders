@@ -38,7 +38,7 @@ namespace utils
 
 	inline bool RectIntersect(Entity e1, Entity e2)
 	{
-		return RangeIntersect(e1.m_position.GetX() - e1.m_textureRect.w / 2, e1.m_position.GetX() + e1.m_textureRect.w / 2, e2.m_position.GetX() - e2.m_textureRect.w / 2, e2.m_position.GetX() + e2.m_textureRect.w / 2) &&
-			RangeIntersect(e1.m_position.GetY() - e1.m_textureRect.h / 2, e1.m_position.GetY() + e1.m_textureRect.h / 2, e2.m_position.GetY() - e2.m_textureRect.h / 2, e2.m_position.GetY() + e2.m_textureRect.h / 2);
+		return RangeIntersect(e1.m_position.GetX() - e1.m_textureRect.w * e1.m_scale / 2, e1.m_position.GetX() + e1.m_textureRect.w * e1.m_scale / 2, e2.m_position.GetX() - e2.m_textureRect.w * e2.m_scale / 2, e2.m_position.GetX() + e2.m_textureRect.w * e2.m_scale / 2) &&
+			RangeIntersect(e1.m_position.GetY() - e1.m_textureRect.h * e1.m_scale / 2, e1.m_position.GetY() + e1.m_textureRect.h * e1.m_scale / 2, e2.m_position.GetY() - e2.m_textureRect.h * e2.m_scale / 2, e2.m_position.GetY() + e2.m_textureRect.h * e2.m_scale / 2);
 	}
 }

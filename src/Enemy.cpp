@@ -8,7 +8,7 @@ Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale)
 
 void Enemy::Update()
 {
-
+	//std::cout << m_position.GetX() * m_scale - m_textureRect.w / 2 << std::endl;
 }
 
 void Enemy::Render(SDL_Renderer* renderer)
@@ -20,10 +20,10 @@ void Enemy::Render(SDL_Renderer* renderer)
 	src.h = m_textureRect.h;
 
 	SDL_Rect dst;
-	dst.x = m_position.GetX() * m_scale - m_textureRect.w / 2;
-	dst.y = m_position.GetY() * m_scale - m_textureRect.h / 2;
-	dst.w = src.w;
-	dst.h = src.h;
+	dst.x = m_position.GetX() * m_scale - m_textureRect.w * m_scale / 2;
+	dst.y = m_position.GetY() * m_scale - m_textureRect.h * m_scale / 2;
+	dst.w = src.w * m_scale;
+	dst.h = src.h * m_scale;
 
 	SDL_RenderCopy(renderer, m_texture, &src, &dst);
 }

@@ -18,8 +18,8 @@ Game::Game()
 	AssetManager::GetInstance().Load(m_renderer, "Projectile", "res/gfx/Projectile.png");
 	AssetManager::GetInstance().Load(m_renderer, "Enemy", "res/gfx/Enemy1.png");
 
-	m_entities.push_back(std::make_unique<Player>(Vector(50.f, 162.f), "Player", 3.5f));
-	m_entities.push_back(std::make_unique<Enemy>(Vector(50.f, 25.f), "Enemy", 3.5f));
+	m_entities.push_back(std::make_unique<Player>(Vector(50.f, 100.f), "Player", 3.5f));
+	m_entities.push_back(std::make_unique<Enemy>(Vector(50.f, 40.f), "Enemy", 3.5f));
 
 }
 
@@ -88,7 +88,7 @@ void Game::Update()
 	for (auto& entity : m_entities)
 		entity->HandleEvents(m_event);
 
-	auto player = const_cast<Player*>(dynamic_cast<const Player*>(m_entities[0].get()));
+	Player* player = const_cast<Player*>(dynamic_cast<const Player*>(m_entities[0].get()));
 	player->CheckProjectileCollision(*m_entities[1].get());
 }
 

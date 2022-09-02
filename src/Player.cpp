@@ -10,6 +10,8 @@ Player::Player(const Vector& pos, const std::string& key, const float& scale)
 void Player::Update()
 {
 	m_projectile.Update();
+
+//	std::cout << m_position.GetX() * m_scale << std::endl;
 }
 
 void Player::Render(SDL_Renderer* renderer)
@@ -22,10 +24,10 @@ void Player::Render(SDL_Renderer* renderer)
 	src.h = m_textureRect.h;
 
 	SDL_Rect dst;
-	dst.x = m_position.GetX() * m_scale - m_textureRect.w / 2 ;
-	dst.y = m_position.GetY() * m_scale - m_textureRect.h / 2 ;
-	dst.w = src.w;
-	dst.h = src.h;
+	dst.x = m_position.GetX() * m_scale - m_textureRect.w * m_scale / 2;
+	dst.y = m_position.GetY() * m_scale - m_textureRect.h * m_scale / 2;
+	dst.w = src.w * m_scale;
+	dst.h = src.h * m_scale;
 
 	SDL_RenderCopy(renderer, m_texture, &src, &dst);
 
@@ -54,7 +56,7 @@ void Player::HandleEvents(SDL_Event& event)
 void Player::Shoot()
 {
 	m_isFired = true;
-	m_projectile.m_position = Vector(m_position.GetX(), m_position.GetY() - m_textureRect.h / 2);
+	m_projectile.m_position = Vector(m_position.GetX(), m_position.GetY() - m_textureRect.h * m_scale / 2);
 }
 
 void Player::CheckProjectileCollision(Entity& e)

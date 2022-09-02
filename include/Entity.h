@@ -17,8 +17,8 @@ public:
 public:
 	Vector m_position;
 	SDL_Rect m_textureRect;
+	float m_scale;
 
 protected:
 	SDL_Texture* m_texture;
-	float m_scale;
 };
