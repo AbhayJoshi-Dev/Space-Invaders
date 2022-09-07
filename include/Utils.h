@@ -32,13 +32,13 @@ namespace utils
 
 	inline bool RangeIntersect(float min0, float max0, float min1, float max1)
 	{
-		return std::max(min0, max0) <= std::min(min1, max1) &&
-			std::min(min0, max0) >= std::max(min1, max1);
+		return std::max(min0, max0) >= std::min(min1, max1) &&
+			std::min(min0, max0) <= std::max(min1, max1);
 	}
 
 	inline bool RectIntersect(Entity e1, Entity e2)
 	{
-		return RangeIntersect(e1.m_position.GetX() - e1.m_textureRect.w * e1.m_scale / 2, e1.m_position.GetX() + e1.m_textureRect.w * e1.m_scale / 2, e2.m_position.GetX() - e2.m_textureRect.w * e2.m_scale / 2, e2.m_position.GetX() + e2.m_textureRect.w * e2.m_scale / 2) &&
-			RangeIntersect(e1.m_position.GetY() - e1.m_textureRect.h * e1.m_scale / 2, e1.m_position.GetY() + e1.m_textureRect.h * e1.m_scale / 2, e2.m_position.GetY() - e2.m_textureRect.h * e2.m_scale / 2, e2.m_position.GetY() + e2.m_textureRect.h * e2.m_scale / 2);
+		return RangeIntersect(e1.m_position.GetX() - e1.m_textureRect.w / 2, e1.m_position.GetX() + e1.m_textureRect.w / 2, e2.m_position.GetX() - e2.m_textureRect.w / 2, e2.m_position.GetX() + e2.m_textureRect.w / 2) &&
+			RangeIntersect(e1.m_position.GetY() - e1.m_textureRect.h / 2, e1.m_position.GetY() + e1.m_textureRect.h / 2, e2.m_position.GetY() - e1.m_textureRect.h / 2, e2.m_position.GetY() + e2.m_textureRect.h / 2);
 	}
 }

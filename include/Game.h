@@ -4,6 +4,7 @@
 #include<SDL.h>
 #include<SDL_image.h>
 #include<vector>
+#include<memory>
 
 #include"Utils.h"
 #include"AssetManager.h"

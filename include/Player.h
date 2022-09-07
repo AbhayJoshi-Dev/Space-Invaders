@@ -17,9 +17,11 @@ public:
 	void Shoot();
 	void CheckProjectileCollision(Entity& e);
 
+public:
+	Projectile m_projectile;
+
 private:
 	float m_moveSpeed;
 	bool m_isFired;
 
-	Projectile m_projectile;
 };
