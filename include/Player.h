@@ -5,6 +5,7 @@
 #include"Entity.h"
 #include"Projectile.h"
 #include"Utils.h"
+#include"Enemy.h"
 
 class Player : public Entity
 {
@@ -15,7 +16,7 @@ public:
 	void Render(SDL_Renderer* renderer) override;
 	void HandleEvents(SDL_Event& event) override;
 	void Shoot();
-	void CheckProjectileCollision(Entity& e);
+	bool CheckProjectileCollision(Entity& e);
 
 public:
 	Projectile m_projectile;

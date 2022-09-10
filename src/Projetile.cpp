@@ -12,6 +12,9 @@ Projectile::Projectile(const Vector& pos, const Vector& velocity, const std::str
 void Projectile::Update()
 {
 	m_position = m_position + m_velocity;
+
+	if (m_position.GetY() < 5)
+		m_isDead = true;
 }
 
 void Projectile::Render(SDL_Renderer* renderer)

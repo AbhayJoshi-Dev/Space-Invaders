@@ -10,6 +10,9 @@ Player::Player(const Vector& pos, const std::string& key, const float& scale)
 void Player::Update()
 {
 	m_projectile.Update();
+
+	if (m_projectile.m_isDead)
+		m_isFired = false;
 }
 
 void Player::Render(SDL_Renderer* renderer)
@@ -29,7 +32,7 @@ void Player::Render(SDL_Renderer* renderer)
 
 	SDL_RenderCopy(renderer, m_texture, &src, &dst);
 
-	if(m_isFired)
+	if(m_isFired && !m_projectile.m_isDead)
 		m_projectile.Render(renderer);
 
 }
@@ -47,20 +50,23 @@ void Player::HandleEvents(SDL_Event& event)
 		m_position.SetX(m_position.GetX() - m_moveSpeed);
 	}
 
-	if (keystate[SDL_SCANCODE_X] && !m_isFired)
+	if (keystate[SDL_SCANCODE_X] && !m_isFired && m_projectile.m_isDead)
 		Shoot();
 }
 
 void Player::Shoot()
 {
 	m_isFired = true;
+	m_projectile.m_isDead = false;
 	m_projectile.m_position = Vector(m_position.GetX(), m_position.GetY() - m_textureRect.h / 2);
 }
 
-void Player::CheckProjectileCollision(Entity& e)
+bool Player::CheckProjectileCollision(Entity& e)
 {
 	if (utils::RectIntersect(e, m_projectile))
 	{
-		std::cout << "Collision" << std::endl;
+		return true;
 	}
+
+	return false;
 }
