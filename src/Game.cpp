@@ -13,13 +13,27 @@ Game::Game()
 
 	quit = false;
 
+	//Texture Loading
 	AssetManager::GetInstance().Load(m_renderer, "Player", "res/gfx/Player.png");
 	AssetManager::GetInstance().Load(m_renderer, "Projectile", "res/gfx/Projectile.png");
 	AssetManager::GetInstance().Load(m_renderer, "Enemy1", "res/gfx/Enemy1.png");
+	AssetManager::GetInstance().Load(m_renderer, "Enemy2", "res/gfx/Enemy2.png");
 	AssetManager::GetInstance().Load(m_renderer, "Enemy1Dead", "res/gfx/Enemy1Dead.png");
+	AssetManager::GetInstance().Load(m_renderer, "Enemy3", "res/gfx/Enemy3.png");
+	AssetManager::GetInstance().Load(m_renderer, "Enemy4", "res/gfx/Enemy4.png");
+	AssetManager::GetInstance().Load(m_renderer, "Enemy3Dead", "res/gfx/Enemy3Dead.png");
+	AssetManager::GetInstance().Load(m_renderer, "Enemy5", "res/gfx/Enemy5.png");
+	AssetManager::GetInstance().Load(m_renderer, "Enemy6", "res/gfx/Enemy6.png");
+	AssetManager::GetInstance().Load(m_renderer, "Enemy5Dead", "res/gfx/Enemy5Dead.png");
+	AssetManager::GetInstance().Load(m_renderer, "Enemy7", "res/gfx/Enemy7.png");
+	AssetManager::GetInstance().Load(m_renderer, "Enemy8", "res/gfx/Enemy8.png");
+	AssetManager::GetInstance().Load(m_renderer, "Enemy7Dead", "res/gfx/Enemy7Dead.png");
 
 	m_entities.push_back(std::make_unique<Player>(Vector(200.f, 500.f), "Player", 3.5f));
-	m_entities.push_back(std::make_unique<Enemy>(Vector(200.f, 100.f), "Enemy1", 3.5f, "Enemy1Dead"));
+	m_entities.push_back(std::make_unique<Enemy>(Vector(200.f, 100.f), "Enemy1", 3.5f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_back(std::make_unique<Enemy>(Vector(400.f, 100.f), "Enemy3", 3.5f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_back(std::make_unique<Enemy>(Vector(600.f, 100.f), "Enemy5", 3.5f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_back(std::make_unique<Enemy>(Vector(800.f, 100.f), "Enemy7", 3.5f, "Enemy7Dead", "Enemy8"));
 
 }
 
@@ -89,11 +103,14 @@ void Game::Update()
 		entity->HandleEvents(m_event);
 
 
-	bool collision = const_cast<Player*>(dynamic_cast<const Player*>(m_entities[0].get()))->CheckProjectileCollision(*m_entities[1].get());
-	
-	if (collision)
+	for (int i = 1; i < m_entities.size(); i++)
 	{
-		const_cast<Enemy*>(dynamic_cast<const Enemy*>(m_entities[1].get()))->Dead();
+		bool collision = const_cast<Player*>(dynamic_cast<const Player*>(m_entities[0].get()))->CheckProjectileCollision(*m_entities[i].get());
+	
+		if (collision)
+		{
+			const_cast<Enemy*>(dynamic_cast<const Enemy*>(m_entities[i].get()))->Dead();
+		}
 	}
 }
 

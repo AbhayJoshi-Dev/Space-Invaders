@@ -65,6 +65,7 @@ bool Player::CheckProjectileCollision(Entity& e)
 {
 	if (utils::RectIntersect(e, m_projectile))
 	{
+		m_projectile.m_isDead = true;
 		return true;
 	}
 
