@@ -30,6 +30,11 @@ namespace utils
 		m_fps++;
 	}
 
+	inline int Random(int min, int max)
+	{
+		return (rand() % (max - min + 1)) + min;
+	}
+
 	inline bool RangeIntersect(float min0, float max0, float min1, float max1)
 	{
 		return std::max(min0, max0) >= std::min(min1, max1) &&

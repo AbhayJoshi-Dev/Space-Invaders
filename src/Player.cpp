@@ -1,7 +1,7 @@
 #include"Player.h"
 
 Player::Player(const Vector& pos, const std::string& key, const float& scale)
-	:Entity(pos, key, scale), m_moveSpeed(4.5f), m_projectile(Vector(0.f, 0.f), Vector(0.f, -5.f), "Projectile", 3.5f)
+	:Entity(pos, key, scale), m_moveSpeed(4.5f), m_projectile(Vector(0.f, 0.f), Vector(0.f, -7.f), "Projectile", 3.5f)
 {
 	m_isFired = false;
 

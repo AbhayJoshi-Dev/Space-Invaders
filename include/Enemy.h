@@ -1,6 +1,8 @@
 #pragma once
 
 #include"Entity.h"
+#include"Projectile.h"
+#include"Utils.h"
 
 class Enemy : public Entity
 {
@@ -10,6 +12,8 @@ public:
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
 	void Dead();
+	void Shoot();
+	bool CheckProjectileCollision(Entity& e);
 
 private:
 	bool m_dead;
@@ -22,4 +26,7 @@ private:
 
 	SDL_Texture* m_DeadTexture;
 	SDL_Rect m_DeadRect;
+
+	Projectile m_projectile;
+	bool m_canShoot;
 };

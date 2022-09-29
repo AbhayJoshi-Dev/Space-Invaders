@@ -1,7 +1,7 @@
 #include"Enemy.h"
 
 Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, const std::string& enemyDeadTextureKey, const std::string& enemySecondTextureKey)
-	:Entity(pos, key, scale)
+	:Entity(pos, key, scale), m_projectile(Vector(-100.f, -100.f), Vector(0.f, 6.f), "Projectile", 3.5f)
 {
 	m_dead = false;
 	m_disappear = false;
@@ -20,15 +20,25 @@ Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, cons
 	m_animateCounter = 0;
 	animate = false;
 
+	m_canShoot = true;
 }
 
 void Enemy::Update()
 {
+
+	if (!m_dead && m_canShoot)
+	{
+		if (utils::Random(0, 10) == 5)
+		{
+			Shoot();
+		}
+	}
+
 	if (m_dead)
 	{
 		m_counter += 0.1f;
 
-		if (m_counter > 8.f)
+		if (m_counter > 4.f)
 		{
 			m_disappear = true;
 			m_position = Vector(-10.f, -10.f);
@@ -36,6 +46,9 @@ void Enemy::Update()
 	}
 	else
 		m_counter = 0.f;
+
+	m_projectile.Update();
+
 }
 
 void Enemy::Render(SDL_Renderer* renderer)
@@ -65,6 +78,9 @@ void Enemy::Render(SDL_Renderer* renderer)
 			SDL_RenderCopy(renderer, m_texture, &src, &dst);
 		else if(!animate)
 			SDL_RenderCopy(renderer, m_SecondTexture, &src, &dst);
+
+		m_projectile.Render(renderer);
+
 	}
 	else if(!m_disappear)
 	{
@@ -87,4 +103,21 @@ void Enemy::Render(SDL_Renderer* renderer)
 void Enemy::Dead()
 {
 	m_dead = true;
+}
+void Enemy::Shoot()
+{
+	std::cout << "enemy shooting" << std::endl;
+	m_projectile.m_isDead = false;
+	m_projectile.m_position = Vector(m_position.GetX(), m_position.GetY() + m_textureRect.h / 2);
+	m_canShoot = false;
+}
+
+bool Enemy::CheckProjectileCollision(Entity& e)
+{
+	if (utils::RectIntersect(e, m_projectile))
+	{
+		return true;
+	}
+
+	return false;
 }

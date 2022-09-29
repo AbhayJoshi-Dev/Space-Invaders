@@ -94,6 +94,8 @@ void Game::GameLoop()
 
 void Game::Update()
 {
+
+	srand((unsigned int)time(0));
 	utils::PrintFps();
 
 	for (auto& entity : m_entities)
@@ -101,7 +103,6 @@ void Game::Update()
 
 	for (auto& entity : m_entities)
 		entity->HandleEvents(m_event);
-
 
 	for (int i = 1; i < m_entities.size(); i++)
 	{
