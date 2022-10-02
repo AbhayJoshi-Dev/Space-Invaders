@@ -28,5 +28,4 @@ private:
 	SDL_Rect m_DeadRect;
 
 	Projectile m_projectile;
-	bool m_canShoot;
 };

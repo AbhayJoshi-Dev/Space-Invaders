@@ -1,9 +1,24 @@
 #include"Player.h"
 
-Player::Player(const Vector& pos, const std::string& key, const float& scale)
+Player::Player(const Vector& pos, const std::string& key, const float& scale, const std::string& playerDeadKey1, const std::string& playerDeadKey2)
 	:Entity(pos, key, scale), m_moveSpeed(4.5f), m_projectile(Vector(0.f, 0.f), Vector(0.f, -7.f), "Projectile", 3.5f)
 {
 	m_isFired = false;
+	m_dead = false;
+
+	m_deathTexture1 = AssetManager::GetInstance().Get(playerDeadKey1);
+	SDL_QueryTexture(m_deathTexture1, NULL, NULL, &m_deathRect1.w, &m_deathRect1.h);
+	m_deathRect1.x = 0;
+	m_deathRect1.y = 0;
+	m_deathRect1.w *= m_scale;
+	m_deathRect1.h *= m_scale;
+
+	m_deathTexture2 = AssetManager::GetInstance().Get(playerDeadKey2);
+	SDL_QueryTexture(m_deathTexture2, NULL, NULL, &m_deathRect2.w, &m_deathRect2.h);
+	m_deathRect2.x = 0;
+	m_deathRect2.y = 0;
+	m_deathRect2.w *= m_scale;
+	m_deathRect2.h *= m_scale;
 
 }
 
@@ -70,4 +85,9 @@ bool Player::CheckProjectileCollision(Entity& e)
 	}
 
 	return false;
+}
+
+void Player::Dead()
+{
+	m_dead = true;
 }

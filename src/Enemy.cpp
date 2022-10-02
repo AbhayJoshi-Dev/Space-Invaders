@@ -19,14 +19,12 @@ Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, cons
 
 	m_animateCounter = 0;
 	animate = false;
-
-	m_canShoot = true;
 }
 
 void Enemy::Update()
 {
 
-	if (!m_dead && m_canShoot)
+	if (!m_dead && m_projectile.m_isDead)
 	{
 		if (utils::Random(0, 10) == 5)
 		{
@@ -109,13 +107,13 @@ void Enemy::Shoot()
 	std::cout << "enemy shooting" << std::endl;
 	m_projectile.m_isDead = false;
 	m_projectile.m_position = Vector(m_position.GetX(), m_position.GetY() + m_textureRect.h / 2);
-	m_canShoot = false;
 }
 
 bool Enemy::CheckProjectileCollision(Entity& e)
 {
 	if (utils::RectIntersect(e, m_projectile))
 	{
+		m_projectile.m_isDead = true;
 		return true;
 	}
 

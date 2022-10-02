@@ -28,8 +28,11 @@ Game::Game()
 	AssetManager::GetInstance().Load(m_renderer, "Enemy7", "res/gfx/Enemy7.png");
 	AssetManager::GetInstance().Load(m_renderer, "Enemy8", "res/gfx/Enemy8.png");
 	AssetManager::GetInstance().Load(m_renderer, "Enemy7Dead", "res/gfx/Enemy7Dead.png");
+	AssetManager::GetInstance().Load(m_renderer, "PlayerDeath1", "res/gfx/PlayerDeath1.png");
+	AssetManager::GetInstance().Load(m_renderer, "PlayerDeath2", "res/gfx/PlayerDeath2.png");
 
-	m_entities.push_back(std::make_unique<Player>(Vector(200.f, 500.f), "Player", 3.5f));
+	//creating entities
+	m_entities.push_back(std::make_unique<Player>(Vector(200.f, 500.f), "Player", 3.5f, "PlayerDeath1", "PlayerDeath2"));
 	m_entities.push_back(std::make_unique<Enemy>(Vector(200.f, 100.f), "Enemy1", 3.5f, "Enemy1Dead", "Enemy2"));
 	m_entities.push_back(std::make_unique<Enemy>(Vector(400.f, 100.f), "Enemy3", 3.5f, "Enemy3Dead", "Enemy4"));
 	m_entities.push_back(std::make_unique<Enemy>(Vector(600.f, 100.f), "Enemy5", 3.5f, "Enemy5Dead", "Enemy6"));
@@ -112,6 +115,14 @@ void Game::Update()
 		{
 			const_cast<Enemy*>(dynamic_cast<const Enemy*>(m_entities[i].get()))->Dead();
 		}
+
+		collision = const_cast<Enemy*>(dynamic_cast<const Enemy*>(m_entities[i].get()))->CheckProjectileCollision(*m_entities[0].get());
+
+		if (collision)
+		{
+			const_cast<Player*>(dynamic_cast<const Player*>(m_entities[0].get()))->Dead();
+		}
+
 	}
 }
 
