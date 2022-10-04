@@ -21,6 +21,8 @@ private:
 	float m_counter;
 	int m_animateCounter;
 	bool animate;
+	bool canShoot;
+	float m_shootCounter;
 
 	SDL_Texture* m_SecondTexture;
 

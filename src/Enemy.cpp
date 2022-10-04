@@ -1,7 +1,7 @@
 #include"Enemy.h"
 
 Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, const std::string& enemyDeadTextureKey, const std::string& enemySecondTextureKey)
-	:Entity(pos, key, scale), m_projectile(Vector(-100.f, -100.f), Vector(0.f, 6.f), "Projectile", 3.5f)
+	:Entity(pos, key, scale), m_projectile(Vector(-100.f, -100.f), Vector(0.f, 0.f), "Projectile", 3.5f, "ProjectileDead")
 {
 	m_dead = false;
 	m_disappear = false;
@@ -19,17 +19,30 @@ Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, cons
 
 	m_animateCounter = 0;
 	animate = false;
+	canShoot = true;
+	m_shootCounter = 0;
 }
 
 void Enemy::Update()
 {
 
-	if (!m_dead && m_projectile.m_isDead)
+	if (!m_dead && m_projectile.m_Dead)
 	{
 		if (utils::Random(0, 10) == 5)
 		{
-			Shoot();
+			if (canShoot)
+			{
+				canShoot = false;
+				Shoot();
+			}
 		}
+	}
+
+	m_shootCounter += 1;
+	if (m_shootCounter > 300)
+	{
+		canShoot = true;
+		m_shootCounter = 0;
 	}
 
 	if (m_dead)
@@ -51,15 +64,16 @@ void Enemy::Update()
 
 void Enemy::Render(SDL_Renderer* renderer)
 {
+	SDL_Rect src;
+	SDL_Rect dst;
+
 	if (!m_dead && !m_disappear)
 	{
-		SDL_Rect src;
 		src.x = 0;
 		src.y = 0;
 		src.w = m_textureRect.w;
 		src.h = m_textureRect.h;
 
-		SDL_Rect dst;
 		dst.x = m_position.GetX() - m_textureRect.w / 2;
 		dst.y = m_position.GetY() - m_textureRect.h / 2;
 		dst.w = src.w;
@@ -82,13 +96,11 @@ void Enemy::Render(SDL_Renderer* renderer)
 	}
 	else if(!m_disappear)
 	{
-		SDL_Rect src;
 		src.x = 0;
 		src.y = 0;
 		src.w = m_DeadRect.w;
 		src.h = m_DeadRect.h;
 
-		SDL_Rect dst;
 		dst.x = m_position.GetX() - m_DeadRect.w / 2;
 		dst.y = m_position.GetY() - m_DeadRect.h / 2;
 		dst.w = src.w;
@@ -104,16 +116,16 @@ void Enemy::Dead()
 }
 void Enemy::Shoot()
 {
-	std::cout << "enemy shooting" << std::endl;
-	m_projectile.m_isDead = false;
+	m_projectile.m_Dead = false;
 	m_projectile.m_position = Vector(m_position.GetX(), m_position.GetY() + m_textureRect.h / 2);
+	m_projectile.m_velocity.SetY(6.0f);
 }
 
 bool Enemy::CheckProjectileCollision(Entity& e)
 {
 	if (utils::RectIntersect(e, m_projectile))
 	{
-		m_projectile.m_isDead = true;
+		m_projectile.m_Dead = true;
 		return true;
 	}
 

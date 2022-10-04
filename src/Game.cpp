@@ -30,6 +30,7 @@ Game::Game()
 	AssetManager::GetInstance().Load(m_renderer, "Enemy7Dead", "res/gfx/Enemy7Dead.png");
 	AssetManager::GetInstance().Load(m_renderer, "PlayerDeath1", "res/gfx/PlayerDeath1.png");
 	AssetManager::GetInstance().Load(m_renderer, "PlayerDeath2", "res/gfx/PlayerDeath2.png");
+	AssetManager::GetInstance().Load(m_renderer, "ProjectileDead", "res/gfx/ProjectileDeath.png");
 
 	//creating entities
 	m_entities.push_back(std::make_unique<Player>(Vector(200.f, 500.f), "Player", 3.5f, "PlayerDeath1", "PlayerDeath2"));
@@ -98,7 +99,7 @@ void Game::GameLoop()
 void Game::Update()
 {
 
-	srand((unsigned int)time(0));
+	//srand((unsigned int)time(0));
 	utils::PrintFps();
 
 	for (auto& entity : m_entities)

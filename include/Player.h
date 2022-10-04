@@ -32,4 +32,7 @@ private:
 
 	SDL_Rect m_deathRect1;
 	SDL_Rect m_deathRect2;
+
+	int m_animateCounter;
+	bool m_animate;
 };
