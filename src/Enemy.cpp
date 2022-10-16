@@ -74,8 +74,8 @@ void Enemy::Render(SDL_Renderer* renderer)
 		src.w = m_textureRect.w;
 		src.h = m_textureRect.h;
 
-		dst.x = m_position.GetX() - m_textureRect.w / 2;
-		dst.y = m_position.GetY() - m_textureRect.h / 2;
+		dst.x = m_position.m_x - m_textureRect.w / 2;
+		dst.y = m_position.m_y - m_textureRect.h / 2;
 		dst.w = src.w;
 		dst.h = src.h;
 
@@ -101,8 +101,8 @@ void Enemy::Render(SDL_Renderer* renderer)
 		src.w = m_DeadRect.w;
 		src.h = m_DeadRect.h;
 
-		dst.x = m_position.GetX() - m_DeadRect.w / 2;
-		dst.y = m_position.GetY() - m_DeadRect.h / 2;
+		dst.x = m_position.m_x - m_DeadRect.w / 2;
+		dst.y = m_position.m_y - m_DeadRect.h / 2;
 		dst.w = src.w;
 		dst.h = src.h;
 
@@ -117,8 +117,8 @@ void Enemy::Dead()
 void Enemy::Shoot()
 {
 	m_projectile.m_Dead = false;
-	m_projectile.m_position = Vector(m_position.GetX(), m_position.GetY() + m_textureRect.h / 2);
-	m_projectile.m_velocity.SetY(6.0f);
+	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y + m_textureRect.h / 2);
+	m_projectile.m_velocity.m_y = 6.0f;
 }
 
 bool Enemy::CheckProjectileCollision(Entity& e)
@@ -130,4 +130,9 @@ bool Enemy::CheckProjectileCollision(Entity& e)
 	}
 
 	return false;
+}
+
+void Enemy::OnCollision(const ICollidable& otherCollidable)
+{
+	m_projectile.m_Dead = true;
 }

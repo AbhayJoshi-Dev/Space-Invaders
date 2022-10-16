@@ -3,14 +3,11 @@
 #include<iostream>
 #include<SDL.h>
 #include<SDL_image.h>
-#include<vector>
 #include<memory>
+#include<forward_list>
 
 #include"Utils.h"
-#include"AssetManager.h"
-#include"Entity.h"
 #include"Player.h"
-#include"Projectile.h"
 #include"Enemy.h"
 
 class Game
@@ -22,6 +19,7 @@ public:
 	void GameLoop();
 	void Update();
 	void Render();
+	void CheckCollisions(std::forward_list<ICollidable*>& collidables);
 
 private:
 	SDL_Window* m_window;
@@ -30,7 +28,7 @@ private:
 	bool quit;
 	SDL_Event m_event;
 
-	std::vector<std::unique_ptr<Entity>> m_entities;
+	std::forward_list<std::unique_ptr<Entity>> m_entities;
 
 	const float TIMESTEP = 0.01f;
 	float m_accumulator = 0.f;

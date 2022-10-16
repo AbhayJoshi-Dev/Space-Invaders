@@ -3,8 +3,9 @@
 #include"Entity.h"
 #include"Projectile.h"
 #include"Utils.h"
+#include"ICollidable.h"
 
-class Enemy : public Entity
+class Enemy : public Entity, public ICollidable
 {
 public:
 	Enemy() = default;
@@ -14,6 +15,8 @@ public:
 	void Dead();
 	void Shoot();
 	bool CheckProjectileCollision(Entity& e);
+
+	void OnCollision(const ICollidable& otherCollidable) override;
 
 private:
 	bool m_dead;

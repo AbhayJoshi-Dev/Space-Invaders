@@ -44,8 +44,8 @@ void Player::Render(SDL_Renderer* renderer)
 		src.w = m_textureRect.w;
 		src.h = m_textureRect.h;
 
-		dst.x = m_position.GetX() - m_textureRect.w / 2;
-		dst.y = m_position.GetY() - m_textureRect.h / 2;
+		dst.x = m_position.m_x - m_textureRect.w / 2;
+		dst.y = m_position.m_y - m_textureRect.h / 2;
 		dst.w = src.w;
 		dst.h = src.h;
 
@@ -67,8 +67,8 @@ void Player::Render(SDL_Renderer* renderer)
 			src.w = m_deathRect1.w;
 			src.h = m_deathRect1.h;
 
-			dst.x = m_position.GetX() - m_deathRect1.w / 2;
-			dst.y = m_position.GetY() - m_deathRect1.h / 2;
+			dst.x = m_position.m_x - m_deathRect1.w / 2;
+			dst.y = m_position.m_y - m_deathRect1.h / 2;
 			dst.w = src.w;
 			dst.h = src.h;
 			SDL_RenderCopy(renderer, m_deathTexture1, &src, &dst);
@@ -81,8 +81,8 @@ void Player::Render(SDL_Renderer* renderer)
 			src.w = m_deathRect2.w;
 			src.h = m_deathRect2.h;
 
-			dst.x = m_position.GetX() - m_deathRect2.w / 2;
-			dst.y = m_position.GetY() - m_deathRect2.h / 2;
+			dst.x = m_position.m_x - m_deathRect2.w / 2;
+			dst.y = m_position.m_y - m_deathRect2.h / 2;
 			dst.w = src.w;
 			dst.h = src.h;
 			SDL_RenderCopy(renderer, m_deathTexture2, &src, &dst);
@@ -100,14 +100,14 @@ void Player::HandleEvents(SDL_Event& event)
 
 	if (keystate[SDL_SCANCODE_D] || keystate[SDL_SCANCODE_RIGHT])
 	{
-		m_position.SetX(m_position.GetX() + m_moveSpeed);
+		m_position.m_x = m_position.m_x + m_moveSpeed;
 	}
 	if (keystate[SDL_SCANCODE_A] || keystate[SDL_SCANCODE_LEFT])
 	{
-		m_position.SetX(m_position.GetX() - m_moveSpeed);
+		m_position.m_x = m_position.m_x - m_moveSpeed;
 	}
 
-	if (keystate[SDL_SCANCODE_X] && !m_isFired && m_projectile.m_Dead)
+	if (keystate[SDL_SCANCODE_X] && !m_isFired && m_projectile.m_Dead && !m_dead)
 		Shoot();
 }
 
@@ -115,7 +115,7 @@ void Player::Shoot()
 {
 	m_isFired = true;
 	m_projectile.m_Dead = false;
-	m_projectile.m_position = Vector(m_position.GetX(), m_position.GetY() - m_textureRect.h / 2);
+	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y - m_textureRect.h / 2);
 }
 
 bool Player::CheckProjectileCollision(Entity& e)

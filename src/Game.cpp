@@ -1,5 +1,7 @@
 #include"Game.h"
 
+#include<functional>
+
 Game::Game()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -33,12 +35,11 @@ Game::Game()
 	AssetManager::GetInstance().Load(m_renderer, "ProjectileDead", "res/gfx/ProjectileDeath.png");
 
 	//creating entities
-	m_entities.push_back(std::make_unique<Player>(Vector(200.f, 500.f), "Player", 3.5f, "PlayerDeath1", "PlayerDeath2"));
-	m_entities.push_back(std::make_unique<Enemy>(Vector(200.f, 100.f), "Enemy1", 3.5f, "Enemy1Dead", "Enemy2"));
-	m_entities.push_back(std::make_unique<Enemy>(Vector(400.f, 100.f), "Enemy3", 3.5f, "Enemy3Dead", "Enemy4"));
-	m_entities.push_back(std::make_unique<Enemy>(Vector(600.f, 100.f), "Enemy5", 3.5f, "Enemy5Dead", "Enemy6"));
-	m_entities.push_back(std::make_unique<Enemy>(Vector(800.f, 100.f), "Enemy7", 3.5f, "Enemy7Dead", "Enemy8"));
-
+	m_entities.push_front(std::make_unique<Player>(Vector(200.f, 500.f), "Player", 3.5f, "PlayerDeath1", "PlayerDeath2"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(200.f, 100.f), "Enemy1", 3.5f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(400.f, 100.f), "Enemy3", 3.5f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(600.f, 100.f), "Enemy5", 3.5f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(800.f, 100.f), "Enemy7", 3.5f, "Enemy7Dead", "Enemy8"));
 }
 
 Game::~Game()
@@ -99,32 +100,54 @@ void Game::GameLoop()
 void Game::Update()
 {
 
+//	std::function<void(int)> fun = [](int a) {
+	//	std::cout << "print" << " " << a << std::endl;
+	//};
+
+	//fun(0);
+
+
 	//srand((unsigned int)time(0));
 	utils::PrintFps();
 
+	std::forward_list<ICollidable*> collidables;
+
 	for (auto& entity : m_entities)
+	{
 		entity->Update();
 
-	for (auto& entity : m_entities)
 		entity->HandleEvents(m_event);
 
-	for (int i = 1; i < m_entities.size(); i++)
-	{
-		bool collision = const_cast<Player*>(dynamic_cast<const Player*>(m_entities[0].get()))->CheckProjectileCollision(*m_entities[i].get());
-	
-		if (collision)
+		auto collidable = dynamic_cast<ICollidable*>(entity.get());
+		if (collidable)
 		{
-			const_cast<Enemy*>(dynamic_cast<const Enemy*>(m_entities[i].get()))->Dead();
-		}
-
-		collision = const_cast<Enemy*>(dynamic_cast<const Enemy*>(m_entities[i].get()))->CheckProjectileCollision(*m_entities[0].get());
-
-		if (collision)
-		{
-			const_cast<Player*>(dynamic_cast<const Player*>(m_entities[0].get()))->Dead();
+			collidables.push_front(collidable);
 		}
 
 	}
+
+	this->CheckCollisions(collidables);
+
+
+
+
+	/*for (auto& entity : m_entities)
+	{
+		bool collision = const_cast<Player*>(dynamic_cast<const Player*>(entity.get()))->CheckProjectileCollision(*entity.get());
+	
+		if (collision)
+		{
+			const_cast<Enemy*>(dynamic_cast<const Enemy*>(entity.get()))->Dead();
+		}
+
+		collision = const_cast<Enemy*>(dynamic_cast<const Enemy*>(entity.get()))->CheckProjectileCollision(*entity.get());
+
+		if (collision)
+		{
+			const_cast<Player*>(dynamic_cast<const Player*>(entity.get()))->Dead();
+		}
+
+	}*/
 }
 
 void Game::Render()
@@ -137,4 +160,21 @@ void Game::Render()
 	}
 
 	SDL_RenderPresent(m_renderer);
+}
+
+void Game::CheckCollisions(std::forward_list<ICollidable*>& collidables)
+{
+	for (auto& entityA : collidables)
+	{
+		for (auto& entityB : collidables)
+		{
+			if (entityA != entityB)
+			{
+			//	if (utils::RectIntersect(entityA, entityB))
+				//{
+					//entityA.On
+			//	}
+			}
+		}
+	}
 }

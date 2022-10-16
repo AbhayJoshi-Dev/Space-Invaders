@@ -20,7 +20,7 @@ Projectile::Projectile(const Vector& pos, const Vector& velocity, const std::str
 void Projectile::Update()
 {
 	m_position = m_position + m_velocity;
-	if (m_position.GetY() > 600)
+	if (m_position.m_y > 600 || m_position.m_y < -5)
 	{
 		m_Dead = true;
 	}
@@ -38,11 +38,22 @@ void Projectile::Render(SDL_Renderer* renderer)
 		src.w = m_textureRect.w;
 		src.h = m_textureRect.h;
 
-		dst.x = m_position.GetX() - m_textureRect.w / 2;
-		dst.y = m_position.GetY() - m_textureRect.h / 2;
+		dst.x = m_position.m_x - m_textureRect.w / 2;
+		dst.y = m_position.m_y - m_textureRect.h / 2;
 		dst.w = src.w;
 		dst.h = src.h;
 
 		SDL_RenderCopy(renderer, m_texture, &src, &dst);
 	}
+}
+
+bool Projectile::OnCollision(Entity& entity)
+{
+	if (utils::RectIntersect(entity, ))
+	{
+		m_Dead = true;
+		return true;
+	}
+
+	return false;
 }
