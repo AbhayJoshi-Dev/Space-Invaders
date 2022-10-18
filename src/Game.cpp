@@ -11,7 +11,7 @@ Game::Game()
 	if(!(IMG_Init(imgFlag) & imgFlag))
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 
-	CreateWindow("Space Invaders", 1280, 720);
+	CreateWindow("Space Invaders", 1280, 720);//320, 180
 
 	quit = false;
 
@@ -35,7 +35,7 @@ Game::Game()
 	AssetManager::GetInstance().Load(m_renderer, "ProjectileDead", "res/gfx/ProjectileDeath.png");
 
 	//creating entities
-	m_entities.push_front(std::make_unique<Player>(Vector(200.f, 500.f), "Player", 3.5f, "PlayerDeath1", "PlayerDeath2"));
+	m_entities.push_front(std::make_unique<Player>(Vector(300, 500), "Player", 3.5f, "PlayerDeath1", "PlayerDeath2"));
 	m_entities.push_front(std::make_unique<Enemy>(Vector(200.f, 100.f), "Enemy1", 3.5f, "Enemy1Dead", "Enemy2"));
 	m_entities.push_front(std::make_unique<Enemy>(Vector(400.f, 100.f), "Enemy3", 3.5f, "Enemy3Dead", "Enemy4"));
 	m_entities.push_front(std::make_unique<Enemy>(Vector(600.f, 100.f), "Enemy5", 3.5f, "Enemy5Dead", "Enemy6"));
@@ -62,6 +62,7 @@ void Game::CreateWindow(const char* title, int w, int h)
 
 	if (m_renderer == NULL)
 		std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << std::endl;
+
 }
 
 void Game::GameLoop()
@@ -112,7 +113,7 @@ void Game::Update()
 
 	std::forward_list<ICollidable*> collidables;
 
-	for (auto& entity : m_entities)
+	for (const auto& entity : m_entities)
 	{
 		entity->Update();
 
@@ -124,11 +125,36 @@ void Game::Update()
 			collidables.push_front(collidable);
 		}
 
+
+		if (entity->m_tag == "Player")
+		{
+			const auto& player = dynamic_cast<Player*>(entity.get());
+			if (player)
+			{
+
+				auto collidable = dynamic_cast<ICollidable*>(&player->m_projectile);
+
+				if (collidable)
+					collidables.push_front(collidable);
+			}
+		}
+		else if (entity->m_tag == "Enemy")
+		{
+			const auto& enemy = dynamic_cast<Enemy*>(entity.get());
+			if (enemy)
+			{
+
+				auto collidable = dynamic_cast<ICollidable*>(&enemy->m_projectile);
+
+				if (collidable)
+					collidables.push_front(collidable);
+			}
+		}
+
 	}
 
+
 	this->CheckCollisions(collidables);
-
-
 
 
 	/*for (auto& entity : m_entities)
@@ -170,10 +196,15 @@ void Game::CheckCollisions(std::forward_list<ICollidable*>& collidables)
 		{
 			if (entityA != entityB)
 			{
-			//	if (utils::RectIntersect(entityA, entityB))
-				//{
-					//entityA.On
-			//	}
+
+				auto entity1 = dynamic_cast<Entity*>(entityA);
+				auto entity2 = dynamic_cast<Entity*>(entityB);
+
+				if (utils::RectIntersect(*entity1, *entity2))
+				{
+					std::cout << "Collision" << std::endl;
+					entityA->OnCollision(entityB);
+				}
 			}
 		}
 	}

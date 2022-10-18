@@ -7,7 +7,7 @@
 #include"Utils.h"
 #include"Enemy.h"
 
-class Player : public Entity
+class Player : public Entity, public ICollidable
 {
 public:
 	Player() = default;
@@ -16,15 +16,14 @@ public:
 	void Render(SDL_Renderer* renderer) override;
 	void HandleEvents(SDL_Event& event) override;
 	void Shoot();
-	bool CheckProjectileCollision(Entity& e);
 	void Dead();
+	void OnCollision(ICollidable* otherCollidable) override;
 
 public:
 	Projectile m_projectile;
 
 private:
 	float m_moveSpeed;
-	bool m_isFired;
 	bool m_dead;
 
 	SDL_Texture* m_deathTexture1;

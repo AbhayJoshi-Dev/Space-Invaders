@@ -1,9 +1,8 @@
 #include"Projectile.h"
 
-Projectile::Projectile(const Vector& pos, const Vector& velocity, const std::string& key, float scale, const std::string& deadKey)
-	:Entity(pos, key, scale)
+Projectile::Projectile(const Vector& pos, const Vector& velocity, const std::string& key, float scale, const std::string& deadKey, std::string parentTag)
+	:Entity(pos, key, scale, key), m_velocity(velocity), m_parentTag(parentTag)
 {
-	m_velocity = velocity;
 
 	m_texture = AssetManager::GetInstance().Get(key);
 	m_Dead = true;
@@ -20,7 +19,7 @@ Projectile::Projectile(const Vector& pos, const Vector& velocity, const std::str
 void Projectile::Update()
 {
 	m_position = m_position + m_velocity;
-	if (m_position.m_y > 600 || m_position.m_y < -5)
+	if (m_position.m_y > 730 || m_position.m_y < -10)
 	{
 		m_Dead = true;
 	}
@@ -49,11 +48,16 @@ void Projectile::Render(SDL_Renderer* renderer)
 
 bool Projectile::OnCollision(Entity& entity)
 {
-	if (utils::RectIntersect(entity, ))
-	{
-		m_Dead = true;
-		return true;
-	}
+	//if (utils::RectIntersect(entity, ))
+	//{
+	//	m_Dead = true;
+	//	return true;
+	//}
 
 	return false;
+}
+
+void Projectile::OnCollision(ICollidable* otherCollidable)
+{
+
 }

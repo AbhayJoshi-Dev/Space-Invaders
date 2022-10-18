@@ -1,7 +1,7 @@
 #include"Enemy.h"
 
 Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, const std::string& enemyDeadTextureKey, const std::string& enemySecondTextureKey)
-	:Entity(pos, key, scale), m_projectile(Vector(-100.f, -100.f), Vector(0.f, 0.f), "Projectile", 3.5f, "ProjectileDead")
+	:Entity(pos, key, scale, "Enemy"), m_projectile(Vector(-100.f, -100.f), Vector(0.f, 0.f), "Projectile", 3.5f, "ProjectileDead", "Enemy")
 {
 	m_dead = false;
 	m_disappear = false;
@@ -117,7 +117,7 @@ void Enemy::Dead()
 void Enemy::Shoot()
 {
 	m_projectile.m_Dead = false;
-	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y + m_textureRect.h / 2);
+	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y + m_textureRect.h / 2 + 10);
 	m_projectile.m_velocity.m_y = 6.0f;
 }
 
@@ -132,7 +132,15 @@ bool Enemy::CheckProjectileCollision(Entity& e)
 	return false;
 }
 
-void Enemy::OnCollision(const ICollidable& otherCollidable)
+void Enemy::OnCollision(ICollidable* otherCollidable)
 {
-	m_projectile.m_Dead = true;
+
+
+	const auto& proj = dynamic_cast<Projectile*>(otherCollidable);
+
+	if (proj->m_parentTag == "Player")
+	{
+		Dead();
+		proj->m_Dead = true;
+	}
 }

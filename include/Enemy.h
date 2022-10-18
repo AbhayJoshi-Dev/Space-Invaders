@@ -16,7 +16,10 @@ public:
 	void Shoot();
 	bool CheckProjectileCollision(Entity& e);
 
-	void OnCollision(const ICollidable& otherCollidable) override;
+	void OnCollision(ICollidable* otherCollidable) override;
+
+public:
+	Projectile m_projectile;
 
 private:
 	bool m_dead;
@@ -32,5 +35,4 @@ private:
 	SDL_Texture* m_DeadTexture;
 	SDL_Rect m_DeadRect;
 
-	Projectile m_projectile;
 };

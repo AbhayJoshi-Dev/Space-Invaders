@@ -2,7 +2,8 @@
 
 class ICollidable
 {
+public:
 	virtual ~ICollidable() {}
 
-	virtual void OnCollision(const ICollidable& otherCollidable) {}
+	virtual void OnCollision(ICollidable* otherCollidable) {}
 };

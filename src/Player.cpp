@@ -1,9 +1,8 @@
 #include"Player.h"
 
 Player::Player(const Vector& pos, const std::string& key, const float& scale, const std::string& playerDeadKey1, const std::string& playerDeadKey2)
-	:Entity(pos, key, scale), m_moveSpeed(2.5f), m_projectile(Vector(0.f, 0.f), Vector(0.f, -7.f), "Projectile", 3.5f, "ProjectileDead")
+	:Entity(pos, key, scale, key), m_moveSpeed(2.5f), m_projectile(Vector(0.f, 0.f), Vector(0.f, -7.f), "Projectile", 3.5f, "ProjectileDead", "Player")
 {
-	m_isFired = false;
 	m_dead = false;
 
 	m_deathTexture1 = AssetManager::GetInstance().Get(playerDeadKey1);
@@ -27,9 +26,6 @@ Player::Player(const Vector& pos, const std::string& key, const float& scale, co
 void Player::Update()
 {
 	m_projectile.Update();
-
-	if (m_projectile.m_Dead)
-		m_isFired = false;
 }
 
 void Player::Render(SDL_Renderer* renderer)
@@ -89,7 +85,7 @@ void Player::Render(SDL_Renderer* renderer)
 		}
 	}
 
-	if(m_isFired && !m_projectile.m_Dead)
+	if(!m_projectile.m_Dead)
 		m_projectile.Render(renderer);
 
 }
@@ -107,18 +103,18 @@ void Player::HandleEvents(SDL_Event& event)
 		m_position.m_x = m_position.m_x - m_moveSpeed;
 	}
 
-	if (keystate[SDL_SCANCODE_X] && !m_isFired && m_projectile.m_Dead && !m_dead)
+	if (keystate[SDL_SCANCODE_X] && m_projectile.m_Dead && !m_dead)
 		Shoot();
+
 }
 
 void Player::Shoot()
 {
-	m_isFired = true;
 	m_projectile.m_Dead = false;
-	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y - m_textureRect.h / 2);
+	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y - m_textureRect.h / 2 - 10);
 }
 
-bool Player::CheckProjectileCollision(Entity& e)
+/*bool Player::CheckProjectileCollision(Entity& e)
 {
 	if (utils::RectIntersect(e, m_projectile))
 	{
@@ -127,7 +123,7 @@ bool Player::CheckProjectileCollision(Entity& e)
 	}
 
 	return false;
-}
+}*/
 
 void Player::Dead()
 {
@@ -136,4 +132,9 @@ void Player::Dead()
 		std::cout << "PlayerDead" << std::endl;
 		m_dead = true;
 	}
+}
+
+void Player::OnCollision(ICollidable* otherCollidable)
+{
+	
 }

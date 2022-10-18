@@ -1,7 +1,7 @@
 #include"Entity.h"
 
-Entity::Entity(const Vector& pos, const std::string& key, const float& scale)
-	:m_position(pos), m_scale(scale)
+Entity::Entity(const Vector& pos, const std::string& key, const float& scale, const std::string& tag)
+	:m_position(pos), m_scale(scale), m_tag(tag)
 {
 	m_texture = AssetManager::GetInstance().Get(key);
 
@@ -12,10 +12,6 @@ Entity::Entity(const Vector& pos, const std::string& key, const float& scale)
 
 	m_textureRect.w *= m_scale;
 	m_textureRect.h *= m_scale;
-}
-
-Entity::~Entity()
-{
 
 }
 
