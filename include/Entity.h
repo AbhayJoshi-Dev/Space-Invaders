@@ -14,6 +14,7 @@ public:
 	virtual void Update();
 	virtual void Render(SDL_Renderer* renderer);
 	virtual void HandleEvents(SDL_Event& event);
+	virtual bool Destroy();
 public:
 	Vector m_position;
 	SDL_Rect m_textureRect;

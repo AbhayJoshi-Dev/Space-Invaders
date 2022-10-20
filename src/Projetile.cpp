@@ -18,11 +18,15 @@ Projectile::Projectile(const Vector& pos, const Vector& velocity, const std::str
 
 void Projectile::Update()
 {
-	m_position = m_position + m_velocity;
+	if (!m_Dead)
+		m_position = m_position + m_velocity;
+
 	if (m_position.m_y > 730 || m_position.m_y < -10)
 	{
 		m_Dead = true;
 	}
+	if (m_Dead)
+		m_position = Vector(0.f, 0.f);
 }
 
 void Projectile::Render(SDL_Renderer* renderer)
@@ -55,9 +59,4 @@ bool Projectile::OnCollision(Entity& entity)
 	//}
 
 	return false;
-}
-
-void Projectile::OnCollision(ICollidable* otherCollidable)
-{
-
 }

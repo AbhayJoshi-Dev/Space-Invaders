@@ -5,5 +5,5 @@ class ICollidable
 public:
 	virtual ~ICollidable() {}
 
-	virtual void OnCollision(ICollidable* otherCollidable) {}
+	virtual void OnCollision(ICollidable& otherCollidable) {}
 };

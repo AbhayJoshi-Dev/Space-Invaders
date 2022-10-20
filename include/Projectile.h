@@ -11,7 +11,6 @@ public:
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
 	bool OnCollision(Entity& entity);
-	void OnCollision(ICollidable* otherCollidable) override;
 public:
 	bool m_Dead;
 	bool m_boundDead;

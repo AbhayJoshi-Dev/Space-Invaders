@@ -92,26 +92,30 @@ void Player::Render(SDL_Renderer* renderer)
 
 void Player::HandleEvents(SDL_Event& event)
 {
-	const Uint8* keystate = SDL_GetKeyboardState(NULL);
-
-	if (keystate[SDL_SCANCODE_D] || keystate[SDL_SCANCODE_RIGHT])
+	if (!m_dead)
 	{
-		m_position.m_x = m_position.m_x + m_moveSpeed;
-	}
-	if (keystate[SDL_SCANCODE_A] || keystate[SDL_SCANCODE_LEFT])
-	{
-		m_position.m_x = m_position.m_x - m_moveSpeed;
-	}
 
-	if (keystate[SDL_SCANCODE_X] && m_projectile.m_Dead && !m_dead)
-		Shoot();
+		const Uint8* keystate = SDL_GetKeyboardState(NULL);
+
+		if (keystate[SDL_SCANCODE_D] || keystate[SDL_SCANCODE_RIGHT])
+		{
+			m_position.m_x = m_position.m_x + m_moveSpeed;
+		}
+		if (keystate[SDL_SCANCODE_A] || keystate[SDL_SCANCODE_LEFT])
+		{
+			m_position.m_x = m_position.m_x - m_moveSpeed;
+		}
+
+		if (m_projectile.m_Dead && keystate[SDL_SCANCODE_X])
+			Shoot();
+	}
 
 }
 
 void Player::Shoot()
 {
 	m_projectile.m_Dead = false;
-	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y - m_textureRect.h / 2 - 10);
+	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y - m_textureRect.h / 2 - 11);
 }
 
 /*bool Player::CheckProjectileCollision(Entity& e)
@@ -129,12 +133,20 @@ void Player::Dead()
 {
 	if (!m_dead)
 	{
-		std::cout << "PlayerDead" << std::endl;
 		m_dead = true;
 	}
 }
 
-void Player::OnCollision(ICollidable* otherCollidable)
+void Player::OnCollision(ICollidable& otherCollidable)
 {
-	
+	if (!m_dead)
+	{
+		const auto& proj = dynamic_cast<Projectile*>(&otherCollidable);
+
+		if (proj->m_parentTag == "Enemy")
+		{
+			Dead();
+			proj->m_Dead = true;
+		}
+	}
 }

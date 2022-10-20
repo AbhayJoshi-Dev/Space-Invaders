@@ -17,7 +17,7 @@ public:
 	void HandleEvents(SDL_Event& event) override;
 	void Shoot();
 	void Dead();
-	void OnCollision(ICollidable* otherCollidable) override;
+	void OnCollision(ICollidable& otherCollidable) override;
 
 public:
 	Projectile m_projectile;

@@ -52,7 +52,7 @@ void Enemy::Update()
 		if (m_counter > 4.f)
 		{
 			m_disappear = true;
-			m_position = Vector(-10.f, -10.f);
+			m_position = Vector(0.f, 0.f);
 		}
 	}
 	else
@@ -90,9 +90,6 @@ void Enemy::Render(SDL_Renderer* renderer)
 			SDL_RenderCopy(renderer, m_texture, &src, &dst);
 		else if(!animate)
 			SDL_RenderCopy(renderer, m_SecondTexture, &src, &dst);
-
-		m_projectile.Render(renderer);
-
 	}
 	else if(!m_disappear)
 	{
@@ -108,12 +105,11 @@ void Enemy::Render(SDL_Renderer* renderer)
 
 		SDL_RenderCopy(renderer, m_DeadTexture, &src, &dst);
 	}
+
+	m_projectile.Render(renderer);
+
 }
 
-void Enemy::Dead()
-{
-	m_dead = true;
-}
 void Enemy::Shoot()
 {
 	m_projectile.m_Dead = false;
@@ -132,15 +128,21 @@ bool Enemy::CheckProjectileCollision(Entity& e)
 	return false;
 }
 
-void Enemy::OnCollision(ICollidable* otherCollidable)
+void Enemy::OnCollision(ICollidable& otherCollidable)
 {
-
-
-	const auto& proj = dynamic_cast<Projectile*>(otherCollidable);
-
-	if (proj->m_parentTag == "Player")
+	if (!m_dead)
 	{
-		Dead();
-		proj->m_Dead = true;
+		const auto& proj = dynamic_cast<Projectile*>(&otherCollidable);
+
+		if (proj->m_parentTag == "Player")
+		{
+			m_dead = true;
+			proj->m_Dead = true;
+		}
 	}
+}
+
+bool Enemy::Destroy()
+{
+	return (m_disappear && m_projectile.m_Dead);
 }

@@ -29,3 +29,8 @@ void Entity::HandleEvents(SDL_Event& event)
 {
 
 }
+
+bool Entity::Destroy()
+{
+	return false;
+}

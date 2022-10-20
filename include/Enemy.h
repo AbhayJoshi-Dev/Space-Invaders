@@ -12,17 +12,18 @@ public:
 	Enemy(const Vector& pos, const std::string& key, const float& scale, const std::string& enemyDeadTextureKey, const std::string& enemySecondTextureKey);
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
-	void Dead();
 	void Shoot();
 	bool CheckProjectileCollision(Entity& e);
 
-	void OnCollision(ICollidable* otherCollidable) override;
+	void OnCollision(ICollidable& otherCollidable) override;
+
+	bool Destroy() override;
 
 public:
 	Projectile m_projectile;
+	bool m_dead;
 
 private:
-	bool m_dead;
 	bool m_disappear;
 	float m_counter;
 	int m_animateCounter;

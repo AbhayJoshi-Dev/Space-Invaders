@@ -40,6 +40,10 @@ Game::Game()
 	m_entities.push_front(std::make_unique<Enemy>(Vector(400.f, 100.f), "Enemy3", 3.5f, "Enemy3Dead", "Enemy4"));
 	m_entities.push_front(std::make_unique<Enemy>(Vector(600.f, 100.f), "Enemy5", 3.5f, "Enemy5Dead", "Enemy6"));
 	m_entities.push_front(std::make_unique<Enemy>(Vector(800.f, 100.f), "Enemy7", 3.5f, "Enemy7Dead", "Enemy8"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(200.f, 200.f), "Enemy1", 3.5f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(400.f, 200.f), "Enemy3", 3.5f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(600.f, 200.f), "Enemy5", 3.5f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(800.f, 200.f), "Enemy7", 3.5f, "Enemy7Dead", "Enemy8"));
 }
 
 Game::~Game()
@@ -108,8 +112,11 @@ void Game::Update()
 	//fun(0);
 
 
-	//srand((unsigned int)time(0));
+	srand((unsigned int)time(0));
 	utils::PrintFps();
+
+
+
 
 	std::forward_list<ICollidable*> collidables;
 
@@ -129,7 +136,7 @@ void Game::Update()
 		if (entity->m_tag == "Player")
 		{
 			const auto& player = dynamic_cast<Player*>(entity.get());
-			if (player)
+			if (!player->m_projectile.m_Dead)
 			{
 
 				auto collidable = dynamic_cast<ICollidable*>(&player->m_projectile);
@@ -141,7 +148,7 @@ void Game::Update()
 		else if (entity->m_tag == "Enemy")
 		{
 			const auto& enemy = dynamic_cast<Enemy*>(entity.get());
-			if (enemy)
+			if (!enemy->m_projectile.m_Dead)
 			{
 
 				auto collidable = dynamic_cast<ICollidable*>(&enemy->m_projectile);
@@ -151,11 +158,15 @@ void Game::Update()
 			}
 		}
 
+
 	}
-
-
 	this->CheckCollisions(collidables);
 
+	m_entities.remove_if([](const auto& entity)
+		{ 
+			return entity->Destroy();
+		}
+	);
 
 	/*for (auto& entity : m_entities)
 	{
@@ -196,14 +207,12 @@ void Game::CheckCollisions(std::forward_list<ICollidable*>& collidables)
 		{
 			if (entityA != entityB)
 			{
-
 				auto entity1 = dynamic_cast<Entity*>(entityA);
 				auto entity2 = dynamic_cast<Entity*>(entityB);
 
 				if (utils::RectIntersect(*entity1, *entity2))
 				{
-					std::cout << "Collision" << std::endl;
-					entityA->OnCollision(entityB);
+					entityA->OnCollision(*entityB);
 				}
 			}
 		}
