@@ -9,6 +9,7 @@
 #include"Utils.h"
 #include"Player.h"
 #include"Enemy.h"
+#include"Wall.h"
 
 class Game
 {
@@ -28,7 +29,7 @@ private:
 	bool quit;
 	SDL_Event m_event;
 
-	std::forward_list<std::unique_ptr<Entity>> m_entities;
+	std::forward_list<std::shared_ptr<Entity>> m_entities;
 
 	const float TIMESTEP = 0.01f;
 	float m_accumulator = 0.f;
@@ -38,4 +39,10 @@ private:
 	float m_alpha = 0.f;
 	int m_startTicks;
 	int m_frameTicks;
+	bool m_canShoot = true;
+	Timer timer;
+
+	Player* m_player;
+
+	Wall m_wall;
 };

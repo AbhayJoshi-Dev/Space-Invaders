@@ -5,13 +5,17 @@ Entity::Entity(const Vector& pos, const std::string& key, const float& scale, co
 {
 	m_texture = AssetManager::GetInstance().Get(key);
 
-	m_textureRect.x = 0;
-	m_textureRect.y = 0;
+	if (tag != "Wall")
+	{
+		m_textureRect.x = 0;
+		m_textureRect.y = 0;
 
-	SDL_QueryTexture(m_texture, NULL, NULL, &m_textureRect.w, &m_textureRect.h);
+		SDL_QueryTexture(m_texture, NULL, NULL, &m_textureRect.w, &m_textureRect.h);
 
-	m_textureRect.w *= m_scale;
-	m_textureRect.h *= m_scale;
+		m_textureRect.w *= m_scale;
+		m_textureRect.h *= m_scale;
+	}
+
 
 }
 

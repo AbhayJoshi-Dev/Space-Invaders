@@ -1,7 +1,7 @@
 #include"Player.h"
 
 Player::Player(const Vector& pos, const std::string& key, const float& scale, const std::string& playerDeadKey1, const std::string& playerDeadKey2)
-	:Entity(pos, key, scale, key), m_moveSpeed(2.5f), m_projectile(Vector(0.f, 0.f), Vector(0.f, -7.f), "Projectile", 3.5f, "ProjectileDead", "Player")
+	:Entity(pos, key, scale, key), m_moveSpeed(2.5f), m_projectile(Vector(-10.f, 0.f), Vector(0.f, 0.f), "Projectile", 3.f, "ProjectileDead", "Player")
 {
 	m_dead = false;
 
@@ -21,6 +21,7 @@ Player::Player(const Vector& pos, const std::string& key, const float& scale, co
 
 	m_animate = false;
 	m_animateCounter = 0;
+	m_canShoot = true;
 }
 
 void Player::Update()
@@ -85,7 +86,7 @@ void Player::Render(SDL_Renderer* renderer)
 		}
 	}
 
-	if(!m_projectile.m_Dead)
+	if(!m_projectile.m_disappear)
 		m_projectile.Render(renderer);
 
 }
@@ -94,7 +95,6 @@ void Player::HandleEvents(SDL_Event& event)
 {
 	if (!m_dead)
 	{
-
 		const Uint8* keystate = SDL_GetKeyboardState(NULL);
 
 		if (keystate[SDL_SCANCODE_D] || keystate[SDL_SCANCODE_RIGHT])
@@ -105,29 +105,19 @@ void Player::HandleEvents(SDL_Event& event)
 		{
 			m_position.m_x = m_position.m_x - m_moveSpeed;
 		}
-
-		if (m_projectile.m_Dead && keystate[SDL_SCANCODE_X])
-			Shoot();
 	}
-
 }
 
 void Player::Shoot()
 {
-	m_projectile.m_Dead = false;
-	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y - m_textureRect.h / 2 - 11);
-}
-
-/*bool Player::CheckProjectileCollision(Entity& e)
-{
-	if (utils::RectIntersect(e, m_projectile))
+	if (m_projectile.m_Dead)
 	{
-		m_projectile.m_Dead = true;
-		return true;
+		m_projectile.m_Dead = false;
+		m_projectile.m_position = Vector(m_position.m_x, m_position.m_y - m_textureRect.h / 2 - m_projectile.m_textureRect.h / 2 - 1);
+		std::cout << m_textureRect.h / 2 << std::endl;
+		m_projectile.m_velocity.m_y = -7.0f;
 	}
-
-	return false;
-}*/
+}
 
 void Player::Dead()
 {

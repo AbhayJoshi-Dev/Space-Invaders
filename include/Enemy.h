@@ -4,6 +4,7 @@
 #include"Projectile.h"
 #include"Utils.h"
 #include"ICollidable.h"
+#include"Timer.h"
 
 class Enemy : public Entity, public ICollidable
 {
@@ -13,7 +14,6 @@ public:
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
 	void Shoot();
-	bool CheckProjectileCollision(Entity& e);
 
 	void OnCollision(ICollidable& otherCollidable) override;
 
@@ -25,7 +25,6 @@ public:
 
 private:
 	bool m_disappear;
-	float m_counter;
 	int m_animateCounter;
 	bool animate;
 	bool canShoot;
@@ -35,5 +34,7 @@ private:
 
 	SDL_Texture* m_DeadTexture;
 	SDL_Rect m_DeadRect;
+	
+	Timer m_timer;
 
 };

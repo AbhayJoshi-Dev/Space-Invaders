@@ -1,7 +1,7 @@
 #include"Enemy.h"
 
 Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, const std::string& enemyDeadTextureKey, const std::string& enemySecondTextureKey)
-	:Entity(pos, key, scale, "Enemy"), m_projectile(Vector(-100.f, -100.f), Vector(0.f, 0.f), "Projectile", 3.5f, "ProjectileDead", "Enemy")
+	:Entity(pos, key, scale, "Enemy"), m_projectile(Vector(-100.f, -100.f), Vector(0.f, 0.f), "Projectile", 3.f, "ProjectileDead", "Enemy")
 {
 	m_dead = false;
 	m_disappear = false;
@@ -28,7 +28,7 @@ void Enemy::Update()
 
 	if (!m_dead && m_projectile.m_Dead)
 	{
-		if (utils::Random(0, 10) == 5)
+		if (utils::Random(0, 15) == 5)
 		{
 			if (canShoot)
 			{
@@ -39,7 +39,7 @@ void Enemy::Update()
 	}
 
 	m_shootCounter += 1;
-	if (m_shootCounter > 300)
+	if (m_shootCounter > 600)
 	{
 		canShoot = true;
 		m_shootCounter = 0;
@@ -47,16 +47,19 @@ void Enemy::Update()
 
 	if (m_dead)
 	{
-		m_counter += 0.1f;
-
-		if (m_counter > 4.f)
+		if (!m_timer.IsStarted())
+			m_timer.Start();
+		
+		if (m_timer.GetTicks() * 0.001f > 0.3f)
 		{
 			m_disappear = true;
-			m_position = Vector(0.f, 0.f);
 		}
 	}
-	else
-		m_counter = 0.f;
+	//else
+	//{
+	//	if(m_timer.IsStarted())
+		//	m_timer.Stop();
+//	}
 
 	m_projectile.Update();
 
@@ -115,17 +118,6 @@ void Enemy::Shoot()
 	m_projectile.m_Dead = false;
 	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y + m_textureRect.h / 2 + 10);
 	m_projectile.m_velocity.m_y = 6.0f;
-}
-
-bool Enemy::CheckProjectileCollision(Entity& e)
-{
-	if (utils::RectIntersect(e, m_projectile))
-	{
-		m_projectile.m_Dead = true;
-		return true;
-	}
-
-	return false;
 }
 
 void Enemy::OnCollision(ICollidable& otherCollidable)

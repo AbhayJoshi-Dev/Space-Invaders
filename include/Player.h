@@ -5,7 +5,6 @@
 #include"Entity.h"
 #include"Projectile.h"
 #include"Utils.h"
-#include"Enemy.h"
 
 class Player : public Entity, public ICollidable
 {
@@ -34,4 +33,5 @@ private:
 
 	int m_animateCounter;
 	bool m_animate;
+	bool m_canShoot;
 };

@@ -43,7 +43,7 @@ namespace utils
 
 	inline bool RectIntersect(Entity e1, Entity e2)
 	{
-		return RangeIntersect(e1.m_position.m_x - e1.m_textureRect.w / 2, e1.m_position.m_x + e1.m_textureRect.w / 2, e2.m_position.m_x - e2.m_textureRect.w / 2, e2.m_position.m_x + e2.m_textureRect.w / 2) &&
-			RangeIntersect(e1.m_position.m_y - e1.m_textureRect.h / 2, e1.m_position.m_y + e1.m_textureRect.h / 2, e2.m_position.m_y - e1.m_textureRect.h / 2, e2.m_position.m_y + e2.m_textureRect.h / 2);
+		return RangeIntersect(e1.m_position.m_x - (float)e1.m_textureRect.w / 2.f, e1.m_position.m_x + (float)e1.m_textureRect.w / 2.f, e2.m_position.m_x - (float)e2.m_textureRect.w / 2.f, e2.m_position.m_x + (float)e2.m_textureRect.w / 2.f) &&
+			RangeIntersect(e1.m_position.m_y - (float)e1.m_textureRect.h / 2.f, e1.m_position.m_y + (float)e1.m_textureRect.h / 2.f, e2.m_position.m_y - (float)e2.m_textureRect.h / 2.f, e2.m_position.m_y + (float)e2.m_textureRect.h / 2.f);
 	}
 }

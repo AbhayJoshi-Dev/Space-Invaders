@@ -33,17 +33,40 @@ Game::Game()
 	AssetManager::GetInstance().Load(m_renderer, "PlayerDeath1", "res/gfx/PlayerDeath1.png");
 	AssetManager::GetInstance().Load(m_renderer, "PlayerDeath2", "res/gfx/PlayerDeath2.png");
 	AssetManager::GetInstance().Load(m_renderer, "ProjectileDead", "res/gfx/ProjectileDeath.png");
+	AssetManager::GetInstance().Load(m_renderer, "Wall", "res/gfx/Wall.png");
 
 	//creating entities
-	m_entities.push_front(std::make_unique<Player>(Vector(300, 500), "Player", 3.5f, "PlayerDeath1", "PlayerDeath2"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(200.f, 100.f), "Enemy1", 3.5f, "Enemy1Dead", "Enemy2"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(400.f, 100.f), "Enemy3", 3.5f, "Enemy3Dead", "Enemy4"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(600.f, 100.f), "Enemy5", 3.5f, "Enemy5Dead", "Enemy6"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(800.f, 100.f), "Enemy7", 3.5f, "Enemy7Dead", "Enemy8"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(200.f, 200.f), "Enemy1", 3.5f, "Enemy1Dead", "Enemy2"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(400.f, 200.f), "Enemy3", 3.5f, "Enemy3Dead", "Enemy4"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(600.f, 200.f), "Enemy5", 3.5f, "Enemy5Dead", "Enemy6"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(800.f, 200.f), "Enemy7", 3.5f, "Enemy7Dead", "Enemy8"));
+
+	auto ptr = std::make_unique<Player>(Vector(300.f, 675.f), "Player", 3.f, "PlayerDeath1", "PlayerDeath2");
+	m_player = ptr.get();
+	m_entities.push_front(std::move(ptr));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(200.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(400.f, 100.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(600.f, 100.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(800.f, 100.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(200.f, 200.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(400.f, 200.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(600.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(800.f, 200.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	//Walls
+	/*m_entities.push_front(std::make_unique<WallPiece>(Vector(200.f, 500.f), "Wall", Square));
+	m_entities.push_front(std::make_unique<WallPiece>(Vector(200.f, 524.f), "Wall", Square));
+	m_entities.push_front(std::make_unique<WallPiece>(Vector(224.f, 524.f), "Wall", Square));
+	m_entities.push_front(std::make_unique<WallPiece>(Vector(176.f, 524.f), "Wall", Square));
+	m_entities.push_front(std::make_unique<WallPiece>(Vector(224.f, 548.f), "Wall", Square));
+	m_entities.push_front(std::make_unique<WallPiece>(Vector(176.f, 548.f), "Wall", Square));
+	m_entities.push_front(std::make_unique<WallPiece>(Vector(222.5f, 501.5f), "Wall", RightTriangle));
+	m_entities.push_front(std::make_unique<WallPiece>(Vector(177.5f, 501.5f), "Wall", LeftTriangle));*/
+
+	m_wall.CreateWall(Vector(200.f, 500.f), "Wall");
+	m_wall.CreateWall(Vector(400.f, 500.f), "Wall");
+	m_wall.CreateWall(Vector(600.f, 500.f), "Wall");
+	m_wall.CreateWall(Vector(800.f, 500.f), "Wall");
+
+	for (auto& entity : m_wall.GetPieces())
+	{
+		m_entities.push_front(entity);
+	}
 }
 
 Game::~Game()
@@ -86,6 +109,15 @@ void Game::GameLoop()
 			{
 				if (m_event.type == SDL_QUIT)
 					quit = true;
+				if (m_canShoot && m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_x)
+				{
+					m_player->Shoot();
+					m_canShoot = false;
+				}
+				if (m_event.type == SDL_KEYUP && m_event.key.keysym.sym == SDLK_x)
+				{
+					m_canShoot = true;
+				}
 			}
 
 			m_accumulator -= TIMESTEP;
@@ -111,12 +143,8 @@ void Game::Update()
 
 	//fun(0);
 
-
 	srand((unsigned int)time(0));
 	utils::PrintFps();
-
-
-
 
 	std::forward_list<ICollidable*> collidables;
 
@@ -157,8 +185,6 @@ void Game::Update()
 					collidables.push_front(collidable);
 			}
 		}
-
-
 	}
 	this->CheckCollisions(collidables);
 
@@ -167,24 +193,6 @@ void Game::Update()
 			return entity->Destroy();
 		}
 	);
-
-	/*for (auto& entity : m_entities)
-	{
-		bool collision = const_cast<Player*>(dynamic_cast<const Player*>(entity.get()))->CheckProjectileCollision(*entity.get());
-	
-		if (collision)
-		{
-			const_cast<Enemy*>(dynamic_cast<const Enemy*>(entity.get()))->Dead();
-		}
-
-		collision = const_cast<Enemy*>(dynamic_cast<const Enemy*>(entity.get()))->CheckProjectileCollision(*entity.get());
-
-		if (collision)
-		{
-			const_cast<Player*>(dynamic_cast<const Player*>(entity.get()))->Dead();
-		}
-
-	}*/
 }
 
 void Game::Render()
@@ -210,8 +218,14 @@ void Game::CheckCollisions(std::forward_list<ICollidable*>& collidables)
 				auto entity1 = dynamic_cast<Entity*>(entityA);
 				auto entity2 = dynamic_cast<Entity*>(entityB);
 
+				if(entity1->m_tag == "Wall" && entity2->m_tag == "Wall")
+				{
+					continue;
+				}
+
 				if (utils::RectIntersect(*entity1, *entity2))
 				{
+					std::cout << "Collision" << std::endl;
 					entityA->OnCollision(*entityB);
 				}
 			}
