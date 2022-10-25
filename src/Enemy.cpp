@@ -17,7 +17,6 @@ Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, cons
 
 	m_SecondTexture = AssetManager::GetInstance().Get(enemySecondTextureKey);
 
-	m_animateCounter = 0;
 	animate = false;
 	canShoot = true;
 	m_shootCounter = 0;
@@ -25,7 +24,6 @@ Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, cons
 
 void Enemy::Update()
 {
-
 	if (!m_dead && m_projectile.m_Dead)
 	{
 		if (utils::Random(0, 15) == 5)
@@ -33,7 +31,7 @@ void Enemy::Update()
 			if (canShoot)
 			{
 				canShoot = false;
-				Shoot();
+				//Shoot();
 			}
 		}
 	}
@@ -47,10 +45,10 @@ void Enemy::Update()
 
 	if (m_dead)
 	{
-		if (!m_timer.IsStarted())
-			m_timer.Start();
+		if (!m_deadTimer.IsStarted())
+			m_deadTimer.Start();
 		
-		if (m_timer.GetTicks() * 0.001f > 0.3f)
+		if (m_deadTimer.GetTicks() * 0.001f > 0.3f)
 		{
 			m_disappear = true;
 		}
@@ -82,13 +80,6 @@ void Enemy::Render(SDL_Renderer* renderer)
 		dst.w = src.w;
 		dst.h = src.h;
 
-		m_animateCounter += 1;
-
-		if (m_animateCounter % 130 == 0)
-		{
-			animate = !animate;
-		}
-
 		if(animate)
 			SDL_RenderCopy(renderer, m_texture, &src, &dst);
 		else if(!animate)
@@ -118,6 +109,11 @@ void Enemy::Shoot()
 	m_projectile.m_Dead = false;
 	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y + m_textureRect.h / 2 + 10);
 	m_projectile.m_velocity.m_y = 6.0f;
+}
+
+void Enemy::Animate()
+{
+	animate = !animate;
 }
 
 void Enemy::OnCollision(ICollidable& otherCollidable)

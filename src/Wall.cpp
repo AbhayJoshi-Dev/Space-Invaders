@@ -25,6 +25,13 @@ WallPiece::WallPiece(const Vector& pos, const std::string& key, const WallPieceT
 		m_textureRect.w = 7;
 		m_textureRect.h = 7;
 	}
+	else if (m_pieceType == CenterSquare)
+	{
+		m_textureRect.x = 8;
+		m_textureRect.y = 8;
+		m_textureRect.w = 8;
+		m_textureRect.h = 11;
+	}
 
 	m_flag = 0;
 
@@ -35,7 +42,7 @@ WallPiece::WallPiece(const Vector& pos, const std::string& key, const WallPieceT
 void WallPiece::Update()
 {
 
-	if (m_pieceType == Square)
+	if (m_pieceType == Square || m_pieceType == CenterSquare)
 	{
 		if (m_flag == 5)
 			m_dead = true;
@@ -45,6 +52,9 @@ void WallPiece::Update()
 		if (m_flag == 3)
 			m_dead = true;
 	}
+
+	if (m_flag > 0 && m_pieceType == CenterSquare)
+		m_pieceType = Square;
 }
 
 void WallPiece::Render(SDL_Renderer* renderer)
@@ -58,6 +68,11 @@ void WallPiece::Render(SDL_Renderer* renderer)
 		{
 			src.w = 8;
 			src.h = 8;
+		}
+		else if (m_pieceType == CenterSquare)
+		{
+			src.w = 8;
+			src.h = 11;
 		}
 		else
 		{
@@ -84,7 +99,15 @@ void WallPiece::OnCollision(ICollidable& otherCollidable)
 		proj->m_Dead = true;
 		proj->m_boundDead = true;
 
-		m_textureRect.y += 9;
+		if (m_pieceType == CenterSquare && m_flag == 0)
+		{
+			m_textureRect.x += 17;
+			m_textureRect.y += 1;
+		}
+		else
+		{
+			m_textureRect.y += 9;
+		}
 		m_flag++;
 
 	}
@@ -93,7 +116,15 @@ void WallPiece::OnCollision(ICollidable& otherCollidable)
 		proj->m_Dead = true;
 		proj->m_boundDead = true;
 
-		m_textureRect.x += 9;
+		if (m_pieceType == CenterSquare && m_flag == 0)
+		{
+			m_textureRect.x += 26;
+			m_textureRect.y -= 8;
+		}
+		else
+		{
+			m_textureRect.x += 9;
+		}
 		m_flag++;
 	}
 }
@@ -106,7 +137,7 @@ bool WallPiece::Destroy()
 void Wall::CreateWall(const Vector& pos, const std::string& key)
 {
 	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x, pos.m_y - 24.f), key, Square));
-	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x, pos.m_y), key, Square));
+	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x, pos.m_y), key, CenterSquare));
 	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x + 24.f, pos.m_y), key, Square));
 	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x - 24.f, pos.m_y), key, Square));
 	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x + 24.f, pos.m_y + 24.f), key, Square));

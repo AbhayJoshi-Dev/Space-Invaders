@@ -21,6 +21,7 @@ public:
 	void Update();
 	void Render();
 	void CheckCollisions(std::forward_list<ICollidable*>& collidables);
+	void MoveEnemies();
 
 private:
 	SDL_Window* m_window;
@@ -40,9 +41,12 @@ private:
 	int m_startTicks;
 	int m_frameTicks;
 	bool m_canShoot = true;
-	Timer timer;
 
 	Player* m_player;
 
 	Wall m_wall;
+	Timer m_timer;
+	int m_flag = 0;
+	bool m_returnflag = false;
+	bool m_moveDown = false;
 };

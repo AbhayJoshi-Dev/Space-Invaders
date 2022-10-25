@@ -10,7 +10,8 @@ enum WallPieceType
 {
 	RightTriangle = 0,
 	LeftTriangle,
-	Square
+	Square,
+	CenterSquare
 };
 
 class WallPiece : public Entity, public ICollidable

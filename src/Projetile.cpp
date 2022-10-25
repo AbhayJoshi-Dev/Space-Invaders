@@ -26,7 +26,7 @@ void Projectile::Update()
 		m_disappear = false;
 		m_position = m_position + m_velocity;
 
-		if (m_position.m_y > 710 || m_position.m_y < 10)
+		if (m_position.m_y > 590 || m_position.m_y < 10)
 		{
 			m_Dead = true;
 			m_boundDead = true;

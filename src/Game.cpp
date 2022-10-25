@@ -11,7 +11,7 @@ Game::Game()
 	if(!(IMG_Init(imgFlag) & imgFlag))
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 
-	CreateWindow("Space Invaders", 1280, 720);//320, 180
+	CreateWindow("Space Invaders", 800, 600);//320, 180
 
 	quit = false;
 
@@ -37,31 +37,39 @@ Game::Game()
 
 	//creating entities
 
-	auto ptr = std::make_unique<Player>(Vector(300.f, 675.f), "Player", 3.f, "PlayerDeath1", "PlayerDeath2");
+	auto ptr = std::make_unique<Player>(Vector(300.f, 575.f), "Player", 3.f, "PlayerDeath1", "PlayerDeath2");
 	m_player = ptr.get();
 	m_entities.push_front(std::move(ptr));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(200.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(400.f, 100.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(600.f, 100.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(800.f, 100.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(200.f, 200.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(400.f, 200.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(600.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	m_entities.push_front(std::make_unique<Enemy>(Vector(800.f, 200.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	//Walls
-	/*m_entities.push_front(std::make_unique<WallPiece>(Vector(200.f, 500.f), "Wall", Square));
-	m_entities.push_front(std::make_unique<WallPiece>(Vector(200.f, 524.f), "Wall", Square));
-	m_entities.push_front(std::make_unique<WallPiece>(Vector(224.f, 524.f), "Wall", Square));
-	m_entities.push_front(std::make_unique<WallPiece>(Vector(176.f, 524.f), "Wall", Square));
-	m_entities.push_front(std::make_unique<WallPiece>(Vector(224.f, 548.f), "Wall", Square));
-	m_entities.push_front(std::make_unique<WallPiece>(Vector(176.f, 548.f), "Wall", Square));
-	m_entities.push_front(std::make_unique<WallPiece>(Vector(222.5f, 501.5f), "Wall", RightTriangle));
-	m_entities.push_front(std::make_unique<WallPiece>(Vector(177.5f, 501.5f), "Wall", LeftTriangle));*/
+	m_entities.push_front(std::make_unique<Enemy>(Vector(75.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(175.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(275.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(375.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(475.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
 
-	m_wall.CreateWall(Vector(200.f, 500.f), "Wall");
-	m_wall.CreateWall(Vector(400.f, 500.f), "Wall");
-	m_wall.CreateWall(Vector(600.f, 500.f), "Wall");
-	m_wall.CreateWall(Vector(800.f, 500.f), "Wall");
+    m_entities.push_front(std::make_unique<Enemy>(Vector(75.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(175.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(275.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(375.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(475.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+
+	m_entities.push_front(std::make_unique<Enemy>(Vector(75.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(175.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(275.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(375.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(475.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	
+	m_entities.push_front(std::make_unique<Enemy>(Vector(75.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(175.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(275.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(375.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	m_entities.push_front(std::make_unique<Enemy>(Vector(475.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+
+
+	//Walls
+	m_wall.CreateWall(Vector(160.f, 500.f), "Wall");
+	m_wall.CreateWall(Vector(320.f, 500.f), "Wall");
+	m_wall.CreateWall(Vector(480.f, 500.f), "Wall");
+	m_wall.CreateWall(Vector(640.f, 500.f), "Wall");
 
 	for (auto& entity : m_wall.GetPieces())
 	{
@@ -193,6 +201,7 @@ void Game::Update()
 			return entity->Destroy();
 		}
 	);
+	MoveEnemies();
 }
 
 void Game::Render()
@@ -230,5 +239,61 @@ void Game::CheckCollisions(std::forward_list<ICollidable*>& collidables)
 				}
 			}
 		}
+	}
+}
+
+void Game::MoveEnemies()
+{
+	std::vector<Enemy*> enemies;
+
+	for (const auto& entity : m_entities)
+	{
+		auto enemy = dynamic_cast<Enemy*>(entity.get());
+		if (enemy)
+		{
+			enemies.push_back(enemy);
+		}
+	}
+
+	if (m_flag == enemies.size())
+		m_flag = 0;
+
+
+	if (!m_timer.IsStarted())
+		m_timer.Start();
+
+	if (m_timer.GetTicks() * 0.001f > 0.05f)
+	{
+		if(!m_returnflag)
+			enemies[m_flag]->m_position.m_x += 20.f;
+		else
+			enemies[m_flag]->m_position.m_x -= 20.f;
+
+
+		if (m_moveDown)
+		{
+			enemies[m_flag]->m_position.m_y += 15.f;
+			if(m_flag == enemies.size() - 1)
+				m_moveDown = false;
+		}
+
+
+		enemies[m_flag]->Animate();
+		m_timer.Stop();
+
+		if (m_flag == enemies.size() - 1)
+		{
+			if (enemies[0]->m_position.m_x >= 725.f)
+			{
+				m_returnflag = true;
+				m_moveDown = true;
+			}
+			else if (enemies[m_flag]->m_position.m_x <= 75.f)
+			{
+				m_returnflag = false;
+				m_moveDown = true;
+			}
+		}
+		m_flag++;
 	}
 }

@@ -14,6 +14,7 @@ public:
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
 	void Shoot();
+	void Animate();
 
 	void OnCollision(ICollidable& otherCollidable) override;
 
@@ -25,7 +26,6 @@ public:
 
 private:
 	bool m_disappear;
-	int m_animateCounter;
 	bool animate;
 	bool canShoot;
 	float m_shootCounter;
@@ -35,6 +35,5 @@ private:
 	SDL_Texture* m_DeadTexture;
 	SDL_Rect m_DeadRect;
 	
-	Timer m_timer;
-
+	Timer m_deadTimer;
 };

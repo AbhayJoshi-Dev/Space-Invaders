@@ -20,8 +20,6 @@ Player::Player(const Vector& pos, const std::string& key, const float& scale, co
 	m_deathRect2.h *= m_scale;
 
 	m_animate = false;
-	m_animateCounter = 0;
-	m_canShoot = true;
 }
 
 void Player::Update()
@@ -50,11 +48,13 @@ void Player::Render(SDL_Renderer* renderer)
 	}
 	else if (m_dead)
 	{
-		m_animateCounter += 1;
+		if (!m_timer.IsStarted())
+			m_timer.Start();
 
-		if (m_animateCounter % 25 == 0)
+		if (m_timer.GetTicks() * 0.001f > .2f)
 		{
 			m_animate = !m_animate;
+			m_timer.Stop();
 		}
 
 		if (m_animate)
@@ -114,7 +114,6 @@ void Player::Shoot()
 	{
 		m_projectile.m_Dead = false;
 		m_projectile.m_position = Vector(m_position.m_x, m_position.m_y - m_textureRect.h / 2 - m_projectile.m_textureRect.h / 2 - 1);
-		std::cout << m_textureRect.h / 2 << std::endl;
 		m_projectile.m_velocity.m_y = -7.0f;
 	}
 }
