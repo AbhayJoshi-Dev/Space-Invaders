@@ -234,7 +234,6 @@ void Game::CheckCollisions(std::forward_list<ICollidable*>& collidables)
 
 				if (utils::RectIntersect(*entity1, *entity2))
 				{
-					std::cout << "Collision" << std::endl;
 					entityA->OnCollision(*entityB);
 				}
 			}
