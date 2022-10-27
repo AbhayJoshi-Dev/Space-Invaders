@@ -3,7 +3,7 @@
 A clone of Space Invaders created using C++ and [SDL2](https://www.libsdl.org/)
 
 ## Demo
-![](https://i.imgur.com/7wlFl7B.gif)
+![](https://i.imgur.com/NTygwuY.gif)
 
 ## Build Instructions
 
