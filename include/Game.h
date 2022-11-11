@@ -3,6 +3,7 @@
 #include<iostream>
 #include<SDL.h>
 #include<SDL_image.h>
+#include<SDL_mixer.h>
 #include<memory>
 #include<forward_list>
 
@@ -10,6 +11,7 @@
 #include"Player.h"
 #include"Enemy.h"
 #include"Wall.h"
+#include"SoundManager.h"
 
 class Game
 {

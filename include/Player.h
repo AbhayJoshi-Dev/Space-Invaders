@@ -5,6 +5,7 @@
 #include"Entity.h"
 #include"Projectile.h"
 #include"Utils.h"
+#include"SoundManager.h"
 
 class Player : public Entity, public ICollidable
 {

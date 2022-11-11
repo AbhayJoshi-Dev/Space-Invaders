@@ -4,12 +4,15 @@
 
 Game::Game()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 		std::cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
 
 	int imgFlag = IMG_INIT_PNG;
 	if(!(IMG_Init(imgFlag) & imgFlag))
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
+
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1028) < 0)
+		std::cout << "SDL_mixer could not initialize! SDL_mixer Error : " << Mix_GetError() << std::endl;
 
 	CreateWindow("Space Invaders", 800, 600);//320, 180
 
@@ -34,6 +37,12 @@ Game::Game()
 	AssetManager::GetInstance().Load(m_renderer, "PlayerDeath2", "res/gfx/PlayerDeath2.png");
 	AssetManager::GetInstance().Load(m_renderer, "ProjectileDead", "res/gfx/ProjectileDeath.png");
 	AssetManager::GetInstance().Load(m_renderer, "Wall", "res/gfx/Wall.png");
+
+	//Audio Loading
+
+	SoundManager::GetInstance().Load("res/audio/shoot.wav", "Shoot");
+	SoundManager::GetInstance().Load("res/audio/invaderkilled.wav", "InvaderKilled");
+
 
 	//creating entities
 

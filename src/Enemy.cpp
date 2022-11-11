@@ -124,6 +124,8 @@ void Enemy::OnCollision(ICollidable& otherCollidable)
 
 		if (proj->m_parentTag == "Player")
 		{
+			SoundManager::GetInstance().Play("InvaderKilled");
+
 			m_dead = true;
 			proj->m_Dead = true;
 		}

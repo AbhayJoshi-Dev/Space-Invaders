@@ -115,6 +115,7 @@ void Player::Shoot()
 		m_projectile.m_Dead = false;
 		m_projectile.m_position = Vector(m_position.m_x, m_position.m_y - m_textureRect.h / 2 - m_projectile.m_textureRect.h / 2 - 1);
 		m_projectile.m_velocity.m_y = -7.0f;
+		SoundManager::GetInstance().Play("Shoot");
 	}
 }
 

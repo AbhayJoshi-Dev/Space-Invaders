@@ -5,6 +5,7 @@
 #include"Utils.h"
 #include"ICollidable.h"
 #include"Timer.h"
+#include"SoundManager.h"
 
 class Enemy : public Entity, public ICollidable
 {
