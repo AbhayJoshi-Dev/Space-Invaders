@@ -35,8 +35,8 @@ class Wall
 public:
 	Wall() = default;
 	void CreateWall(const Vector& pos, const std::string& key);
-	std::forward_list<std::shared_ptr<WallPiece>> GetPieces();
+	std::vector<WallPiece*>& GetPieces();
 
 public:
-	std::forward_list<std::shared_ptr<WallPiece>> m_pieces;
+	std::vector<WallPiece*> m_pieces;
 };

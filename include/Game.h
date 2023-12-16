@@ -5,7 +5,6 @@
 #include<SDL_image.h>
 #include<SDL_mixer.h>
 #include<memory>
-#include<forward_list>
 
 #include"Utils.h"
 #include"Player.h"
@@ -22,7 +21,7 @@ public:
 	void GameLoop();
 	void Update();
 	void Render();
-	void CheckCollisions(std::forward_list<ICollidable*>& collidables);
+	void CheckCollisions(std::vector<ICollidable*>& collidables);
 	void MoveEnemies();
 
 private:
@@ -32,7 +31,7 @@ private:
 	bool quit;
 	SDL_Event m_event;
 
-	std::forward_list<std::shared_ptr<Entity>> m_entities;
+	std::vector<Entity*> m_entities;
 
 	const float TIMESTEP = 0.01f;
 	float m_accumulator = 0.f;

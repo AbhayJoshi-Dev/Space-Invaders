@@ -136,17 +136,17 @@ bool WallPiece::Destroy()
 
 void Wall::CreateWall(const Vector& pos, const std::string& key)
 {
-	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x, pos.m_y - 24.f), key, Square));
-	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x, pos.m_y), key, CenterSquare));
-	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x + 24.f, pos.m_y), key, Square));
-	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x - 24.f, pos.m_y), key, Square));
-	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x + 24.f, pos.m_y + 24.f), key, Square));
-	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x - 24.f, pos.m_y + 24.f), key, Square));
-	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x + 22.5f, pos.m_y - 22.5f), key, RightTriangle));
-	m_pieces.push_front(std::make_shared<WallPiece>(Vector(pos.m_x - 22.5f, pos.m_y - 22.5f), key, LeftTriangle));
+	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x, pos.m_y - 24.f), key, Square));
+	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x, pos.m_y), key, CenterSquare));
+	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y), key, Square));
+	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y), key, Square));
+	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y + 24.f), key, Square));
+	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y + 24.f), key, Square));
+	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x + 22.5f, pos.m_y - 22.5f), key, RightTriangle));
+	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x - 22.5f, pos.m_y - 22.5f), key, LeftTriangle));
 }
 
-std::forward_list<std::shared_ptr<WallPiece>> Wall::GetPieces()
+std::vector<WallPiece*>& Wall::GetPieces()
 {
 	return m_pieces;
 }
