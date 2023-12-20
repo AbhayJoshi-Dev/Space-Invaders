@@ -43,35 +43,35 @@ Game::Game()
 	SoundManager::GetInstance().Load("res/audio/shoot.wav", "Shoot");
 	SoundManager::GetInstance().Load("res/audio/invaderkilled.wav", "InvaderKilled");
 
+	//reserving
+	m_entities.reserve(53);
 
 	//creating entities
-
-
 	m_player = new Player(Vector(300.f, 575.f), "Player", 3.f, "PlayerDeath1", "PlayerDeath2");
-	m_entities.emplace_back(m_player);
-	m_entities.emplace_back(new Enemy(Vector(75.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
-	m_entities.emplace_back(new Enemy(Vector(175.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
-	m_entities.emplace_back(new Enemy(Vector(275.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
-	m_entities.emplace_back(new Enemy(Vector(375.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
-	m_entities.emplace_back(new Enemy(Vector(475.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_back(m_player);
+	m_entities.push_back(new Enemy(Vector(75.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_back(new Enemy(Vector(175.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_back(new Enemy(Vector(275.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_back(new Enemy(Vector(375.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+	m_entities.push_back(new Enemy(Vector(475.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
 
-    m_entities.emplace_back(new Enemy(Vector(75.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	m_entities.emplace_back(new Enemy(Vector(175.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	m_entities.emplace_back(new Enemy(Vector(275.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	m_entities.emplace_back(new Enemy(Vector(375.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	m_entities.emplace_back(new Enemy(Vector(475.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+    m_entities.push_back(new Enemy(Vector(75.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_back(new Enemy(Vector(175.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_back(new Enemy(Vector(275.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_back(new Enemy(Vector(375.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	m_entities.push_back(new Enemy(Vector(475.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
 
-	m_entities.emplace_back(new Enemy(Vector(75.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	m_entities.emplace_back(new Enemy(Vector(175.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	m_entities.emplace_back(new Enemy(Vector(275.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	m_entities.emplace_back(new Enemy(Vector(375.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	m_entities.emplace_back(new Enemy(Vector(475.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_back(new Enemy(Vector(75.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_back(new Enemy(Vector(175.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_back(new Enemy(Vector(275.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_back(new Enemy(Vector(375.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	m_entities.push_back(new Enemy(Vector(475.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
 	
-	m_entities.emplace_back(new Enemy(Vector(75.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	m_entities.emplace_back(new Enemy(Vector(175.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	m_entities.emplace_back(new Enemy(Vector(275.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	m_entities.emplace_back(new Enemy(Vector(375.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	m_entities.emplace_back(new Enemy(Vector(475.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	m_entities.push_back(new Enemy(Vector(75.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	m_entities.push_back(new Enemy(Vector(175.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	m_entities.push_back(new Enemy(Vector(275.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	m_entities.push_back(new Enemy(Vector(375.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	m_entities.push_back(new Enemy(Vector(475.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
 
 
 	//Walls
@@ -82,7 +82,7 @@ Game::Game()
 
 	for (auto& entity : m_wall.GetPieces())
 	{
-		m_entities.emplace_back(entity);
+		m_entities.push_back(entity);
 	}
 }
 
@@ -174,7 +174,7 @@ void Game::Update()
 		auto collidable = dynamic_cast<ICollidable*>(entity);
 		if (collidable)
 		{
-			collidables.emplace_back(collidable);
+			collidables.push_back(collidable);
 		}
 
 
@@ -187,7 +187,7 @@ void Game::Update()
 				auto collidable = dynamic_cast<ICollidable*>(&player->m_projectile);
 
 				if (collidable)
-					collidables.emplace_back(collidable);
+					collidables.push_back(collidable);
 			}
 		}
 		else if (entity->m_tag == "Enemy")
@@ -199,20 +199,23 @@ void Game::Update()
 				auto collidable = dynamic_cast<ICollidable*>(&enemy->m_projectile);
 
 				if (collidable)
-					collidables.emplace_back(collidable);
+					collidables.push_back(collidable);
 			}
 		}
 	}
 	this->CheckCollisions(collidables);
 
-	for (auto& entity : m_entities)
+	for (Entity* entity : m_entities)
 	{
 		if (entity->Destroy())
 		{
-			auto it = std::find(m_entities.begin(), m_entities.end(), entity);
+			std::vector<Entity*>::iterator it = std::find(m_entities.begin(), m_entities.end(), entity);
 
 			if (it != m_entities.end())
+			{
+				delete entity;
 				m_entities.erase(it);
+			}
 		}
 	}
 	MoveEnemies();
