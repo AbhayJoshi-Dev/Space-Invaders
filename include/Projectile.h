@@ -11,9 +11,10 @@ public:
 	Projectile(const Vector& pos, const Vector& velocity, const std::string& key, float scale, const std::string& deadKey, std::string parentTag);
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
+	void OnCollision(ICollidable& otherCollidable) override;
 
 public:
-	bool m_Dead;
+	bool m_dead;
 	Vector m_velocity;
 	std::string m_parentTag;
 	bool m_boundDead;

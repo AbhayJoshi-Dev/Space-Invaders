@@ -4,7 +4,7 @@ Projectile::Projectile(const Vector& pos, const Vector& velocity, const std::str
 	:Entity(pos, key, scale, key), m_velocity(velocity), m_parentTag(parentTag)
 {
 	m_texture = AssetManager::GetInstance().Get(key);
-	m_Dead = true;
+	m_dead = true;
 	m_disappear = false;
 	m_DeadTex = AssetManager::GetInstance().Get(deadKey);
 	SDL_QueryTexture(m_DeadTex, NULL, NULL, &m_DeadRect.w, &m_DeadRect.h);
@@ -17,7 +17,7 @@ Projectile::Projectile(const Vector& pos, const Vector& velocity, const std::str
 
 void Projectile::Update()
 {
-	if (!m_Dead)
+	if (!m_dead)
 	{
 		m_boundDead = false;
 		if (m_timer.IsStarted())
@@ -26,9 +26,9 @@ void Projectile::Update()
 		m_disappear = false;
 		m_position = m_position + m_velocity;
 
-		if (m_position.m_y > 590 || m_position.m_y < 10)
+		if (m_position.m_y > 650 || m_position.m_y < 10)
 		{
-			m_Dead = true;
+			m_dead = true;
 			m_boundDead = true;
 		}
 	}
@@ -50,7 +50,7 @@ void Projectile::Render(SDL_Renderer* renderer)
 	SDL_Rect src;
 	SDL_Rect dst;
 
-	if (!m_Dead)
+	if (!m_dead)
 	{
 		src.x = 0;
 		src.y = 0;
@@ -77,5 +77,21 @@ void Projectile::Render(SDL_Renderer* renderer)
 		dst.h = src.h;
 
 		SDL_RenderCopy(renderer, m_DeadTex, &src, &dst);
+	}
+}
+
+void Projectile::OnCollision(ICollidable& otherCollidable)
+{
+	if (!m_dead)
+	{
+		const auto& proj = dynamic_cast<Projectile*>(&otherCollidable);
+
+		if (proj == NULL)
+			return;
+
+		proj->m_dead = true;
+		m_dead = true;
+		//proj->m_boundDead = true;
+		m_boundDead = true;
 	}
 }

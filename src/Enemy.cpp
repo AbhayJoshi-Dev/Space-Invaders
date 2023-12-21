@@ -24,24 +24,24 @@ Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, cons
 
 void Enemy::Update()
 {
-	if (!m_dead && m_projectile.m_Dead)
-	{
-		if (utils::Random(0, 15) == 5)
-		{
-			if (canShoot)
-			{
-				canShoot = false;
-				//Shoot();
-			}
-		}
-	}
+	//if (!m_dead && m_projectile.m_Dead)
+	//{
+	//	if (utils::Random(0, 15) == 5)
+	//	{
+	//		if (canShoot)
+	//		{
+	//			canShoot = false;
+	//			//Shoot();
+	//		}
+	//	}
+	//}
 
-	m_shootCounter += 1;
-	if (m_shootCounter > 600)
-	{
-		canShoot = true;
-		m_shootCounter = 0;
-	}
+	//m_shootCounter += 1;
+	//if (m_shootCounter > 600)
+	//{
+	//	canShoot = true;
+	//	m_shootCounter = 0;
+	//}
 
 	if (m_dead)
 	{
@@ -106,9 +106,9 @@ void Enemy::Render(SDL_Renderer* renderer)
 
 void Enemy::Shoot()
 {
-	m_projectile.m_Dead = false;
+	m_projectile.m_dead = false;
 	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y + m_textureRect.h / 2 + 10);
-	m_projectile.m_velocity.m_y = 6.0f;
+	m_projectile.m_velocity.m_y = 7.0f;
 }
 
 void Enemy::Animate()
@@ -122,17 +122,20 @@ void Enemy::OnCollision(ICollidable& otherCollidable)
 	{
 		const auto& proj = dynamic_cast<Projectile*>(&otherCollidable);
 
+		if (proj == NULL)
+			return;
+
 		if (proj->m_parentTag == "Player")
 		{
 			SoundManager::GetInstance().Play("InvaderKilled");
 
 			m_dead = true;
-			proj->m_Dead = true;
+			proj->m_dead = true;
 		}
 	}
 }
 
 bool Enemy::Destroy()
 {
-	return (m_disappear && m_projectile.m_Dead);
+	return (m_disappear && m_projectile.m_dead);
 }

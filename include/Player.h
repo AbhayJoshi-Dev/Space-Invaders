@@ -21,10 +21,10 @@ public:
 
 public:
 	Projectile m_projectile;
+	bool m_dead;
 
 private:
 	float m_moveSpeed;
-	bool m_dead;
 
 	SDL_Texture* m_deathTexture1;
 	SDL_Texture* m_deathTexture2;

@@ -23,9 +23,11 @@ public:
 	void OnCollision(ICollidable& otherCollidable) override;
 	bool Destroy() override;
 
+public:
+	bool m_dead;
+
 private:
 	int m_flag;
-	bool m_dead;
 	WallPieceType m_pieceType;
 };
 

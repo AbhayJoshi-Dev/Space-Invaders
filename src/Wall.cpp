@@ -94,9 +94,12 @@ void WallPiece::OnCollision(ICollidable& otherCollidable)
 {
 	const auto& proj = dynamic_cast<Projectile*>(&otherCollidable);
 
+	if (proj == NULL)
+		return;
+
 	if (proj->m_parentTag == "Player")
 	{
-		proj->m_Dead = true;
+		proj->m_dead = true;
 		proj->m_boundDead = true;
 
 		if (m_pieceType == CenterSquare && m_flag == 0)
@@ -113,7 +116,7 @@ void WallPiece::OnCollision(ICollidable& otherCollidable)
 	}
 	else if (proj->m_parentTag == "Enemy")
 	{
-		proj->m_Dead = true;
+		proj->m_dead = true;
 		proj->m_boundDead = true;
 
 		if (m_pieceType == CenterSquare && m_flag == 0)
@@ -136,14 +139,14 @@ bool WallPiece::Destroy()
 
 void Wall::CreateWall(const Vector& pos, const std::string& key)
 {
-	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x, pos.m_y - 24.f), key, Square));
-	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x, pos.m_y), key, CenterSquare));
-	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y), key, Square));
-	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y), key, Square));
-	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y + 24.f), key, Square));
-	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y + 24.f), key, Square));
-	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x + 22.5f, pos.m_y - 22.5f), key, RightTriangle));
-	m_pieces.emplace_back(new WallPiece(Vector(pos.m_x - 22.5f, pos.m_y - 22.5f), key, LeftTriangle));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x, pos.m_y - 24.f), key, Square));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x, pos.m_y), key, CenterSquare));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y), key, Square));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y), key, Square));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y + 24.f), key, Square));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y + 24.f), key, Square));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 22.5f, pos.m_y - 22.5f), key, RightTriangle));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 22.5f, pos.m_y - 22.5f), key, LeftTriangle));
 }
 
 std::vector<WallPiece*>& Wall::GetPieces()

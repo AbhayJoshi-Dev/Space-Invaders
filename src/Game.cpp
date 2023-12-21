@@ -4,7 +4,7 @@
 
 Game::Game()
 {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		std::cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
 
 	int imgFlag = IMG_INIT_PNG;
@@ -14,7 +14,7 @@ Game::Game()
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1028) < 0)
 		std::cout << "SDL_mixer could not initialize! SDL_mixer Error : " << Mix_GetError() << std::endl;
 
-	CreateWindow("Space Invaders", 800, 600);//320, 180
+	CreateWindow("Space Invaders", 880, 660);//320, 180
 
 	quit = false;
 
@@ -38,52 +38,90 @@ Game::Game()
 	AssetManager::GetInstance().Load(m_renderer, "ProjectileDead", "res/gfx/ProjectileDeath.png");
 	AssetManager::GetInstance().Load(m_renderer, "Wall", "res/gfx/Wall.png");
 
+	AssetManager::GetInstance().Load(m_renderer, "Sheet", "res/gfx/spritesheet.png");
+
 	//Audio Loading
 
 	SoundManager::GetInstance().Load("res/audio/shoot.wav", "Shoot");
 	SoundManager::GetInstance().Load("res/audio/invaderkilled.wav", "InvaderKilled");
 
-	//reserving
-	m_entities.reserve(53);
+
+
 
 	//creating entities
-	m_player = new Player(Vector(300.f, 575.f), "Player", 3.f, "PlayerDeath1", "PlayerDeath2");
+	m_player = new Player(Vector(300.f, 640.f), "Player", 3.f, "PlayerDeath1", "PlayerDeath2");
+
 	m_entities.push_back(m_player);
-	m_entities.push_back(new Enemy(Vector(75.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
-	m_entities.push_back(new Enemy(Vector(175.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
-	m_entities.push_back(new Enemy(Vector(275.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
-	m_entities.push_back(new Enemy(Vector(375.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
-	m_entities.push_back(new Enemy(Vector(475.f, 100.f), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
 
-    m_entities.push_back(new Enemy(Vector(75.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	m_entities.push_back(new Enemy(Vector(175.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	m_entities.push_back(new Enemy(Vector(275.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	m_entities.push_back(new Enemy(Vector(375.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	m_entities.push_back(new Enemy(Vector(475.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	int maxEnemiesInARow = 11;
+	int maxEnemiesRows = 5;
+	int xSpacing = 50;
+	int ySpacing = 40;
 
-	m_entities.push_back(new Enemy(Vector(75.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	m_entities.push_back(new Enemy(Vector(175.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	m_entities.push_back(new Enemy(Vector(275.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	m_entities.push_back(new Enemy(Vector(375.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	m_entities.push_back(new Enemy(Vector(475.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	
-	m_entities.push_back(new Enemy(Vector(75.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	m_entities.push_back(new Enemy(Vector(175.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	m_entities.push_back(new Enemy(Vector(275.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	m_entities.push_back(new Enemy(Vector(375.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	m_entities.push_back(new Enemy(Vector(475.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	int XPos = 50;
+	int YPos = 100;
+
+	for (int i = 0; i < maxEnemiesRows; i++)
+	{
+		for (int j = 0; j < maxEnemiesInARow; j++)
+		{
+			switch (i)
+			{
+			case 0:
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+				break;
+			case 1:
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+				break;
+			case 2:
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+				break;
+			case 3:
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+				break;
+			case 4:
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+				break;
+			}
+			XPos += xSpacing;
+		}
+		YPos += ySpacing;
+		XPos = 50;
+	}
+
+ //   m_entities.push_back(new Enemy(Vector(75.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	//m_entities.push_back(new Enemy(Vector(175.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	//m_entities.push_back(new Enemy(Vector(275.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	//m_entities.push_back(new Enemy(Vector(375.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+	//m_entities.push_back(new Enemy(Vector(475.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+
+	//m_entities.push_back(new Enemy(Vector(75.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	//m_entities.push_back(new Enemy(Vector(175.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	//m_entities.push_back(new Enemy(Vector(275.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	//m_entities.push_back(new Enemy(Vector(375.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	//m_entities.push_back(new Enemy(Vector(475.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+	//
+	//m_entities.push_back(new Enemy(Vector(75.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	//m_entities.push_back(new Enemy(Vector(175.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	//m_entities.push_back(new Enemy(Vector(275.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	//m_entities.push_back(new Enemy(Vector(375.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+	//m_entities.push_back(new Enemy(Vector(475.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
 
 
 	//Walls
-	m_wall.CreateWall(Vector(160.f, 500.f), "Wall");
-	m_wall.CreateWall(Vector(320.f, 500.f), "Wall");
-	m_wall.CreateWall(Vector(480.f, 500.f), "Wall");
-	m_wall.CreateWall(Vector(640.f, 500.f), "Wall");
+	m_wall.CreateWall(Vector(150.f, 560.f), "Wall");
+	m_wall.CreateWall(Vector(300.f, 560.f), "Wall");
+	m_wall.CreateWall(Vector(450.f, 560.f), "Wall");
+	m_wall.CreateWall(Vector(600.f, 560.f), "Wall");
 
 	for (auto& entity : m_wall.GetPieces())
 	{
 		m_entities.push_back(entity);
 	}
+
+	m_flag = m_entities.size();
+
+	//m_wall.GetPieces().clear();
 }
 
 Game::~Game()
@@ -160,10 +198,8 @@ void Game::Update()
 
 	//fun(0);
 
-	srand((unsigned int)time(0));
+	srand((unsigned int)SDL_GetTicks());
 	utils::PrintFps();
-
-	std::vector<ICollidable*> collidables;
 
 	for (const auto& entity : m_entities)
 	{
@@ -174,51 +210,86 @@ void Game::Update()
 		auto collidable = dynamic_cast<ICollidable*>(entity);
 		if (collidable)
 		{
-			collidables.push_back(collidable);
+			//don't include dead enemies into the vector
+			// check nly if we are not deleting the memory
+			if (entity->m_tag == "Enemy")
+			{
+				Enemy* enemy = (Enemy*)entity;
+				if (!enemy->m_dead)
+				{
+					m_collidables.push_back(collidable);
+				}
+			}
+			else if (entity->m_tag == "Wall")
+			{
+				WallPiece *wallPiece = (WallPiece*)entity;
+				if (!wallPiece->m_dead)
+				{
+					m_collidables.push_back(collidable);
+				}
+			}
+			else
+			{
+				m_collidables.push_back(collidable);
+			}
 		}
 
 
 		if (entity->m_tag == "Player")
 		{
-			const auto& player = dynamic_cast<Player*>(entity);
-			if (!player->m_projectile.m_Dead)
+			Player* player = (Player*)entity;
+			if (!player->m_projectile.m_dead)
 			{
 
 				auto collidable = dynamic_cast<ICollidable*>(&player->m_projectile);
 
 				if (collidable)
-					collidables.push_back(collidable);
+					m_collidables.push_back(collidable);
 			}
 		}
 		else if (entity->m_tag == "Enemy")
 		{
-			const auto& enemy = dynamic_cast<Enemy*>(entity);
-			if (!enemy->m_projectile.m_Dead)
+			Enemy* enemy = (Enemy*)entity;
+			if (!enemy->m_projectile.m_dead)
 			{
 
 				auto collidable = dynamic_cast<ICollidable*>(&enemy->m_projectile);
 
 				if (collidable)
-					collidables.push_back(collidable);
+					m_collidables.push_back(collidable);
 			}
 		}
 	}
-	this->CheckCollisions(collidables);
+	this->CheckCollisions(m_collidables);
 
-	for (Entity* entity : m_entities)
+	if(!m_player->m_dead)
+		MoveAndShootEnemies();
+
+	m_collidables.clear();
+
+	std::vector<Entity*>::iterator newEnd = std::remove_if(m_entities.begin(), m_entities.end(), [](Entity* entity) { return entity->Destroy() ; });
+
+	for (std::vector<Entity*>::iterator it = newEnd; it != m_entities.end(); it++)
 	{
-		if (entity->Destroy())
+		if ((*it)->Destroy())
 		{
-			std::vector<Entity*>::iterator it = std::find(m_entities.begin(), m_entities.end(), entity);
-
-			if (it != m_entities.end())
-			{
-				delete entity;
-				m_entities.erase(it);
-			}
+			delete* it;
 		}
 	}
-	MoveEnemies();
+
+	m_entities.erase(newEnd, m_entities.end());
+
+	/*for (std::vector<Entity*>::iterator it = m_entities.begin(); it != m_entities.end();)
+	{
+		if ((*it)->Destroy())
+		{
+			delete* it;
+			it = m_entities.erase(it);
+		}
+		else
+			it++;
+	}*/
+
 }
 
 void Game::Render()
@@ -227,8 +298,14 @@ void Game::Render()
 
 	for (auto& entity : m_entities)
 	{
+		if (m_player->m_dead)
+			SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
 		entity->Render(m_renderer);
 	}
+
+	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+	SDL_RenderDrawLine(m_renderer, 700, 10, 700, 650);
+	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 
 	SDL_RenderPresent(m_renderer);
 }
@@ -258,58 +335,75 @@ void Game::CheckCollisions(std::vector<ICollidable*>& collidables)
 	}
 }
 
-void Game::MoveEnemies()
+void Game::MoveAndShootEnemies()
 {
-	std::vector<Enemy*> enemies;
+	int maxdis = 680;
+	int mindis = 40;
+
+	int MoveDir = 1;
 
 	for (const auto& entity : m_entities)
 	{
-		auto enemy = dynamic_cast<Enemy*>(entity);
+		if (entity->m_tag != "Enemy")
+			continue;
+
+		Enemy* enemy = (Enemy*)entity;
 		if (enemy)
 		{
-			enemies.push_back(enemy);
+			m_enemies.push_back(enemy);
+			if (enemy->m_position.m_x >= maxdis && !m_return && !enemy->m_dead)
+			{
+				if (m_flag < 0)
+				{
+					m_return = true;
+					m_moveDown = true;
+				}
+			}
+			else if (enemy->m_position.m_x <= mindis && m_return && !enemy->m_dead)
+			{
+				if (m_flag < 0)
+				{
+					m_return = false;
+					m_moveDown = true;
+				}
+			}
+
+			//for shooting
+			if (!enemy->m_dead && enemy->m_projectile.m_dead)
+			{
+				if (enemy->m_position.m_x <= m_player->m_position.m_x + 25.f && enemy->m_position.m_x >= m_player->m_position.m_x - 25.f)
+				{
+					int r = utils::Random(0, 100);
+					if (r == 5)
+						enemy->Shoot();
+				}
+			}
+
+
 		}
 	}
 
-	if (m_flag == enemies.size())
-		m_flag = 0;
+	if (m_flag >= m_enemies.size() || m_flag < 0)
+		m_flag = m_enemies.size() - 1;
 
 
-	if (!m_timer.IsStarted())
-		m_timer.Start();
-
-	if (m_timer.GetTicks() * 0.001f > 0.05f)
+	if (!m_return)
 	{
-		if(!m_returnflag)
-			enemies[m_flag]->m_position.m_x += 20.f;
-		else
-			enemies[m_flag]->m_position.m_x -= 20.f;
-
-
-		if (m_moveDown)
-		{
-			enemies[m_flag]->m_position.m_y += 15.f;
-			if(m_flag == enemies.size() - 1)
-				m_moveDown = false;
-		}
-
-
-		enemies[m_flag]->Animate();
-		m_timer.Stop();
-
-		if (m_flag == enemies.size() - 1)
-		{
-			if (enemies[0]->m_position.m_x >= 725.f)
-			{
-				m_returnflag = true;
-				m_moveDown = true;
-			}
-			else if (enemies[m_flag]->m_position.m_x <= 75.f)
-			{
-				m_returnflag = false;
-				m_moveDown = true;
-			}
-		}
-		m_flag++;
+		m_enemies[m_flag]->m_position.m_x += 10.f;
 	}
+	else
+		m_enemies[m_flag]->m_position.m_x -= 10.f;
+
+
+	if (m_moveDown)
+	{
+		m_enemies[m_flag]->m_position.m_y += 10.f;
+		if(m_flag == 0)
+			m_moveDown = false;
+	}
+
+
+	m_enemies[m_flag]->Animate();
+	m_flag--;
+	m_enemies.clear();
 }

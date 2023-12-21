@@ -5,6 +5,8 @@
 #include<SDL_image.h>
 #include<SDL_mixer.h>
 #include<memory>
+#include<stdexcept>
+#include<stdlib.h>
 
 #include"Utils.h"
 #include"Player.h"
@@ -22,7 +24,7 @@ public:
 	void Update();
 	void Render();
 	void CheckCollisions(std::vector<ICollidable*>& collidables);
-	void MoveEnemies();
+	void MoveAndShootEnemies();
 
 private:
 	SDL_Window* m_window;
@@ -32,6 +34,8 @@ private:
 	SDL_Event m_event;
 
 	std::vector<Entity*> m_entities;
+	std::vector<Enemy*> m_enemies;
+	std::vector<ICollidable*> m_collidables;
 
 	const float TIMESTEP = 0.01f;
 	float m_accumulator = 0.f;
@@ -46,8 +50,7 @@ private:
 	Player* m_player;
 
 	Wall m_wall;
-	Timer m_timer;
 	int m_flag = 0;
-	bool m_returnflag = false;
+	bool m_return = false;
 	bool m_moveDown = false;
 };

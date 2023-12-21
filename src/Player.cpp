@@ -1,7 +1,7 @@
 #include"Player.h"
 
 Player::Player(const Vector& pos, const std::string& key, const float& scale, const std::string& playerDeadKey1, const std::string& playerDeadKey2)
-	:Entity(pos, key, scale, key), m_moveSpeed(2.5f), m_projectile(Vector(-10.f, 0.f), Vector(0.f, 0.f), "Projectile", 3.f, "ProjectileDead", "Player")
+	:Entity(pos, key, scale, key), m_moveSpeed(4.f), m_projectile(Vector(-10.f, 0.f), Vector(0.f, 0.f), "Projectile", 3.f, "ProjectileDead", "Player")
 {
 	m_dead = false;
 
@@ -110,11 +110,11 @@ void Player::HandleEvents(SDL_Event& event)
 
 void Player::Shoot()
 {
-	if (m_projectile.m_Dead)
+	if (m_projectile.m_dead)
 	{
-		m_projectile.m_Dead = false;
+		m_projectile.m_dead = false;
 		m_projectile.m_position = Vector(m_position.m_x, m_position.m_y - m_textureRect.h / 2 - m_projectile.m_textureRect.h / 2 - 1);
-		m_projectile.m_velocity.m_y = -7.0f;
+		m_projectile.m_velocity.m_y = -10.0f;
 		SoundManager::GetInstance().Play("Shoot");
 	}
 }
@@ -133,10 +133,13 @@ void Player::OnCollision(ICollidable& otherCollidable)
 	{
 		const auto& proj = dynamic_cast<Projectile*>(&otherCollidable);
 
+		if (proj == NULL)
+			return;
+
 		if (proj->m_parentTag == "Enemy")
 		{
 			Dead();
-			proj->m_Dead = true;
+			proj->m_dead = true;
 		}
 	}
 }
