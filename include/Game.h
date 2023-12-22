@@ -53,4 +53,5 @@ private:
 	int m_flag = 0;
 	bool m_return = false;
 	bool m_moveDown = false;
+	bool m_resetgame = false;
 };

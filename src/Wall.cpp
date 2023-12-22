@@ -1,42 +1,42 @@
 #include"Wall.h"
 
-WallPiece::WallPiece(const Vector& pos, const std::string& key, const WallPieceType& m_type)
-	:Entity(pos, key, 1.f, "Wall"), m_pieceType(m_type)
+WallPiece::WallPiece(const Vector& pos, const WallPieceType& m_type)
+	:Entity(pos, { 0, 0, 0, 0 }, 3.f, "Wall"), m_pieceType(m_type)
 {
 	m_dead = false;
 	if (m_pieceType == Square)
 	{
-		m_textureRect.x = 25;
-		m_textureRect.y = 0;
+		m_textureRect.x = 137;
+		m_textureRect.y = 126;
 		m_textureRect.w = 8;
 		m_textureRect.h = 8;
 	}
 	else if(m_pieceType == RightTriangle)
 	{
-		m_textureRect.x = 70;
-		m_textureRect.y = 28;
+		m_textureRect.x = 182;
+		m_textureRect.y = 154;
 		m_textureRect.w = 7;
 		m_textureRect.h = 7;
 	}
 	else if(m_pieceType == LeftTriangle)
 	{
-		m_textureRect.x = 71;
-		m_textureRect.y = 1;
+		m_textureRect.x = 183;
+		m_textureRect.y = 127;
 		m_textureRect.w = 7;
 		m_textureRect.h = 7;
 	}
 	else if (m_pieceType == CenterSquare)
 	{
-		m_textureRect.x = 8;
-		m_textureRect.y = 8;
+		m_textureRect.x = 120;
+		m_textureRect.y = 134;
 		m_textureRect.w = 8;
 		m_textureRect.h = 11;
 	}
 
 	m_flag = 0;
 
-	m_textureRect.w *= 3;
-	m_textureRect.h *= 3;
+	//m_textureRect.w *= 3;
+	//m_textureRect.h *= 3;
 }
 
 void WallPiece::Update()
@@ -61,32 +61,31 @@ void WallPiece::Render(SDL_Renderer* renderer)
 {
 	if (!m_dead)
 	{
-		SDL_Rect src;
-		src.x = m_textureRect.x;
-		src.y = m_textureRect.y;
-		if (m_pieceType == Square)
-		{
-			src.w = 8;
-			src.h = 8;
-		}
-		else if (m_pieceType == CenterSquare)
-		{
-			src.w = 8;
-			src.h = 11;
-		}
-		else
-		{
-			src.w = 7;
-			src.h = 7;
-		}
+		//src.x = m_textureRect.x;
+		//src.y = m_textureRect.y;
+		//if (m_pieceType == Square)
+		//{
+		//	src.w = 8;
+		//	src.h = 8;
+		//}
+		//else if (m_pieceType == CenterSquare)
+		//{
+		//	src.w = 8;
+		//	src.h = 11;
+		//}
+		//else
+		//{
+		//	src.w = 7;
+		//	src.h = 7;
+		//}
 
 		SDL_Rect dst;
-		dst.x = m_position.m_x - (float)m_textureRect.w / 2.f;
-		dst.y = m_position.m_y - (float)m_textureRect.h / 2.f;
-		dst.w = src.w * 3;
-		dst.h = src.h * 3;
+		dst.x = m_position.m_x - (float)m_textureRect.w / 2.f * 3;
+		dst.y = m_position.m_y - (float)m_textureRect.h / 2.f * 3;
+		dst.w = m_textureRect.w * 3;
+		dst.h = m_textureRect.h * 3;
 
-		SDL_RenderCopy(renderer, m_texture, &src, &dst);
+		SDL_RenderCopy(renderer, m_texture, &m_textureRect, &dst);
 	}
 }
 
@@ -97,6 +96,14 @@ void WallPiece::OnCollision(ICollidable& otherCollidable)
 	if (proj == NULL)
 		return;
 
+	if ((m_pieceType == CenterSquare || m_pieceType == Square) && m_flag == 4)
+	{
+		proj->m_dead = true;
+		proj->m_boundDead = true;
+		m_flag++;
+		return;
+	}
+
 	if (proj->m_parentTag == "Player")
 	{
 		proj->m_dead = true;
@@ -106,13 +113,13 @@ void WallPiece::OnCollision(ICollidable& otherCollidable)
 		{
 			m_textureRect.x += 17;
 			m_textureRect.y += 1;
+			m_textureRect.w = 8;
+			m_textureRect.h = 8;
 		}
 		else
 		{
 			m_textureRect.y += 9;
 		}
-		m_flag++;
-
 	}
 	else if (proj->m_parentTag == "Enemy")
 	{
@@ -123,13 +130,15 @@ void WallPiece::OnCollision(ICollidable& otherCollidable)
 		{
 			m_textureRect.x += 26;
 			m_textureRect.y -= 8;
+			m_textureRect.w = 8;
+			m_textureRect.h = 8;
 		}
 		else
 		{
 			m_textureRect.x += 9;
 		}
-		m_flag++;
 	}
+	m_flag++;
 }
 
 bool WallPiece::Destroy()
@@ -137,16 +146,16 @@ bool WallPiece::Destroy()
 	return m_dead;
 }
 
-void Wall::CreateWall(const Vector& pos, const std::string& key)
+void Wall::CreateWall(const Vector& pos)
 {
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x, pos.m_y - 24.f), key, Square));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x, pos.m_y), key, CenterSquare));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y), key, Square));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y), key, Square));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y + 24.f), key, Square));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y + 24.f), key, Square));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 22.5f, pos.m_y - 22.5f), key, RightTriangle));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 22.5f, pos.m_y - 22.5f), key, LeftTriangle));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x, pos.m_y - 24.f), Square));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x, pos.m_y), CenterSquare));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y), Square));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y), Square));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y + 24.f), Square));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y + 24.f), Square));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 22.5f, pos.m_y - 22.5f), RightTriangle));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 22.5f, pos.m_y - 22.5f), LeftTriangle));
 }
 
 std::vector<WallPiece*>& Wall::GetPieces()

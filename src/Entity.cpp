@@ -1,19 +1,21 @@
 #include"Entity.h"
 
-Entity::Entity(const Vector& pos, const std::string& key, const float& scale, const std::string& tag)
+Entity::Entity(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const std::string& tag)
 	:m_position(pos), m_scale(scale), m_tag(tag)
 {
-	m_texture = AssetManager::GetInstance().Get(key);
+	m_texture = AssetManager::GetInstance().Get("Sheet");
 
 	if (tag != "Wall")
 	{
-		m_textureRect.x = 0;
-		m_textureRect.y = 0;
+		m_textureRect = textureRect;
 
-		SDL_QueryTexture(m_texture, NULL, NULL, &m_textureRect.w, &m_textureRect.h);
+		//m_textureRect.x = textureRect.x;
+		//m_textureRect.y = textureRect.y;
 
-		m_textureRect.w *= m_scale;
-		m_textureRect.h *= m_scale;// *0.8f; //
+		//SDL_QueryTexture(m_texture, NULL, NULL, &m_textureRect.w, &m_textureRect.h);
+
+		//m_textureRect.w *= m_scale;
+		//m_textureRect.h *= m_scale;// *0.8f; //
 	}
 
 
@@ -37,4 +39,8 @@ void Entity::HandleEvents(SDL_Event& event)
 bool Entity::Destroy()
 {
 	return false;
+}
+void Entity::Reset()
+{
+
 }

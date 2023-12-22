@@ -19,37 +19,18 @@ Game::Game()
 	quit = false;
 
 	//Texture Loading
-	AssetManager::GetInstance().Load(m_renderer, "Player", "res/gfx/Player.png");
-	AssetManager::GetInstance().Load(m_renderer, "Projectile", "res/gfx/Projectile.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy1", "res/gfx/Enemy1.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy2", "res/gfx/Enemy2.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy1Dead", "res/gfx/Enemy1Dead.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy3", "res/gfx/Enemy3.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy4", "res/gfx/Enemy4.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy3Dead", "res/gfx/Enemy3Dead.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy5", "res/gfx/Enemy5.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy6", "res/gfx/Enemy6.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy5Dead", "res/gfx/Enemy5Dead.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy7", "res/gfx/Enemy7.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy8", "res/gfx/Enemy8.png");
-	AssetManager::GetInstance().Load(m_renderer, "Enemy7Dead", "res/gfx/Enemy7Dead.png");
-	AssetManager::GetInstance().Load(m_renderer, "PlayerDeath1", "res/gfx/PlayerDeath1.png");
-	AssetManager::GetInstance().Load(m_renderer, "PlayerDeath2", "res/gfx/PlayerDeath2.png");
-	AssetManager::GetInstance().Load(m_renderer, "ProjectileDead", "res/gfx/ProjectileDeath.png");
-	AssetManager::GetInstance().Load(m_renderer, "Wall", "res/gfx/Wall.png");
 
-	AssetManager::GetInstance().Load(m_renderer, "Sheet", "res/gfx/spritesheet.png");
+	AssetManager::GetInstance().Load(m_renderer, "Sheet", "res/gfx/sheet.png");
 
 	//Audio Loading
 
 	SoundManager::GetInstance().Load("res/audio/shoot.wav", "Shoot");
 	SoundManager::GetInstance().Load("res/audio/invaderkilled.wav", "InvaderKilled");
 
+	//instead of loading every texture, entity is just taking a SDL_Rect which tells where the texture is in the sheet
 
-
-
-	//creating entities
-	m_player = new Player(Vector(300.f, 640.f), "Player", 3.f, "PlayerDeath1", "PlayerDeath2");
+	//creating entities                            playertexture        playerDeadtexture1   playerDeadtexture2
+	m_player = new Player(Vector(300.f, 640.f), { 115, 63, 11, 8 }, 3.f, { 132, 63, 13, 8 }, { 147, 63, 15, 8 });
 
 	m_entities.push_back(m_player);
 
@@ -67,20 +48,20 @@ Game::Game()
 		{
 			switch (i)
 			{
-			case 0:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+			case 0:                                                //enemytexture1        enemyDeadtexture   enemytexture2
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 1, 19, 6, 8 }, 3.f, { 103, 1, 7, 7 }, { 10, 19, 6, 8 }));
 				break;
 			case 1:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 9, 7, 8 }, 3.f, { 103, 1, 7, 7 }, { 9, 9, 7, 8 }));
 				break;
 			case 2:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 45, 7, 8 }, 3.f, { 103, 37, 7, 7 }, { 9, 45, 7, 8 }));
 				break;
 			case 3:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 36, 8, 8 }, 3.f, { 103, 37, 7, 7 }, { 9, 36, 8, 8 }));
 				break;
 			case 4:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), "Enemy1", 3.f, "Enemy1Dead", "Enemy2"));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 72, 8, 8 }, 3.f, { 103, 73, 7, 7 }, { 9, 72, 8, 8 }));
 				break;
 			}
 			XPos += xSpacing;
@@ -89,30 +70,12 @@ Game::Game()
 		XPos = 50;
 	}
 
- //   m_entities.push_back(new Enemy(Vector(75.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	//m_entities.push_back(new Enemy(Vector(175.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	//m_entities.push_back(new Enemy(Vector(275.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	//m_entities.push_back(new Enemy(Vector(375.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-	//m_entities.push_back(new Enemy(Vector(475.f, 150.f), "Enemy3", 3.f, "Enemy3Dead", "Enemy4"));
-
-	//m_entities.push_back(new Enemy(Vector(75.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	//m_entities.push_back(new Enemy(Vector(175.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	//m_entities.push_back(new Enemy(Vector(275.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	//m_entities.push_back(new Enemy(Vector(375.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	//m_entities.push_back(new Enemy(Vector(475.f, 200.f), "Enemy5", 3.f, "Enemy5Dead", "Enemy6"));
-	//
-	//m_entities.push_back(new Enemy(Vector(75.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	//m_entities.push_back(new Enemy(Vector(175.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	//m_entities.push_back(new Enemy(Vector(275.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	//m_entities.push_back(new Enemy(Vector(375.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-	//m_entities.push_back(new Enemy(Vector(475.f, 250.f), "Enemy7", 3.f, "Enemy7Dead", "Enemy8"));
-
 
 	//Walls
-	m_wall.CreateWall(Vector(150.f, 560.f), "Wall");
-	m_wall.CreateWall(Vector(300.f, 560.f), "Wall");
-	m_wall.CreateWall(Vector(450.f, 560.f), "Wall");
-	m_wall.CreateWall(Vector(600.f, 560.f), "Wall");
+	m_wall.CreateWall(Vector(150.f, 560.f));
+	m_wall.CreateWall(Vector(300.f, 560.f));
+	m_wall.CreateWall(Vector(450.f, 560.f));
+	m_wall.CreateWall(Vector(600.f, 560.f));
 
 	for (auto& entity : m_wall.GetPieces())
 	{
@@ -121,7 +84,8 @@ Game::Game()
 
 	m_flag = m_entities.size();
 
-	//m_wall.GetPieces().clear();
+	m_wall.GetPieces().clear();
+
 }
 
 Game::~Game()
@@ -164,7 +128,7 @@ void Game::GameLoop()
 			{
 				if (m_event.type == SDL_QUIT)
 					quit = true;
-				if (m_canShoot && m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_x)
+				if (!m_player->m_dead && m_canShoot && m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_x)
 				{
 					m_player->Shoot();
 					m_canShoot = false;
@@ -192,11 +156,9 @@ void Game::GameLoop()
 void Game::Update()
 {
 
-//	std::function<void(int)> fun = [](int a) {
-	//	std::cout << "print" << " " << a << std::endl;
-	//};
-
-	//fun(0);
+	if (m_player->m_lives <= 0)
+		m_resetgame = true;
+		
 
 	srand((unsigned int)SDL_GetTicks());
 	utils::PrintFps();
@@ -211,7 +173,7 @@ void Game::Update()
 		if (collidable)
 		{
 			//don't include dead enemies into the vector
-			// check nly if we are not deleting the memory
+			// check this only if we are not deleting the allocated memory
 			if (entity->m_tag == "Enemy")
 			{
 				Enemy* enemy = (Enemy*)entity;
@@ -267,19 +229,19 @@ void Game::Update()
 
 	m_collidables.clear();
 
-	std::vector<Entity*>::iterator newEnd = std::remove_if(m_entities.begin(), m_entities.end(), [](Entity* entity) { return entity->Destroy() ; });
+//	std::vector<Entity*>::iterator newEnd = std::remove_if(m_entities.begin(), m_entities.end(), [](Entity* entity) { return entity->Destroy() ; });
 
-	for (std::vector<Entity*>::iterator it = newEnd; it != m_entities.end(); it++)
-	{
-		if ((*it)->Destroy())
-		{
-			delete* it;
-		}
-	}
+//	for (std::vector<Entity*>::iterator it = newEnd; it != m_entities.end(); it++)
+//	{
+	//	if ((*it)->Destroy())
+	//	{
+	//		delete* it;
+	//	}
+	//}
 
-	m_entities.erase(newEnd, m_entities.end());
+	//m_entities.erase(newEnd, m_entities.end());
 
-	/*for (std::vector<Entity*>::iterator it = m_entities.begin(); it != m_entities.end();)
+	/*for (std::vector<Entity*>::iterator it = m_entities.begin(); it != m_entities.end(); )
 	{
 		if ((*it)->Destroy())
 		{
@@ -341,6 +303,7 @@ void Game::MoveAndShootEnemies()
 	int mindis = 40;
 
 	int MoveDir = 1;
+	int numBullets = 0;
 
 	for (const auto& entity : m_entities)
 	{
@@ -373,18 +336,24 @@ void Game::MoveAndShootEnemies()
 			{
 				if (enemy->m_position.m_x <= m_player->m_position.m_x + 25.f && enemy->m_position.m_x >= m_player->m_position.m_x - 25.f)
 				{
-					int r = utils::Random(0, 100);
+					int r = utils::Random(0, 200);
 					if (r == 5)
+					{
 						enemy->Shoot();
+						numBullets++;
+					}
 				}
 			}
-
-
 		}
 	}
 
+	if (m_enemies.empty())
+		return;
+
 	if (m_flag >= m_enemies.size() || m_flag < 0)
+	{
 		m_flag = m_enemies.size() - 1;
+	}
 
 
 	if (!m_return)

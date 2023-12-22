@@ -1,11 +1,11 @@
 #include"Enemy.h"
 
-Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, const std::string& enemyDeadTextureKey, const std::string& enemySecondTextureKey)
-	:Entity(pos, key, scale, "Enemy"), m_projectile(Vector(-100.f, -100.f), Vector(0.f, 0.f), "Projectile", 3.f, "ProjectileDead", "Enemy")
+Enemy::Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const SDL_Rect& enemyDeadTextureRect, const SDL_Rect& enemySecondTextureRect)
+	:Entity(pos, textureRect, scale, "Enemy"), m_projectile(Vector(-100.f, -100.f), Vector(0.f, 0.f), { 120, 54, 1, 6 }, 3.f, { 117, 45, 6, 8 }, "Enemy")
 {
 	m_dead = false;
 	m_disappear = false;
-	m_DeadTexture = AssetManager::GetInstance().Get(enemyDeadTextureKey);
+	/*m_DeadTexture = AssetManager::GetInstance().Get(enemyDeadTextureKey);
 
 	m_DeadRect.x = 0;
 	m_DeadRect.y = 0;
@@ -15,7 +15,16 @@ Enemy::Enemy(const Vector& pos, const std::string& key, const float& scale, cons
 	m_DeadRect.w *= m_scale;
 	m_DeadRect.h *= m_scale;
 
-	m_SecondTexture = AssetManager::GetInstance().Get(enemySecondTextureKey);
+	m_SecondTexture = AssetManager::GetInstance().Get(enemySecondTextureKey);*/
+
+
+	m_deadTextureRect = enemyDeadTextureRect;
+	//m_deadTextureRect.w *= m_scale;
+	//m_deadTextureRect.h *= m_scale;
+
+	m_secondTextureRect = enemySecondTextureRect;
+	//m_secondTextureRect.w *= m_scale;
+	//m_secondTextureRect.h *= m_scale;
 
 	animate = false;
 	canShoot = true;
@@ -65,39 +74,34 @@ void Enemy::Update()
 
 void Enemy::Render(SDL_Renderer* renderer)
 {
-	SDL_Rect src;
 	SDL_Rect dst;
 
 	if (!m_dead && !m_disappear)
 	{
-		src.x = 0;
-		src.y = 0;
-		src.w = m_textureRect.w;
-		src.h = m_textureRect.h;
+		SDL_Rect tempRect;
 
-		dst.x = m_position.m_x - m_textureRect.w / 2;
-		dst.y = m_position.m_y - m_textureRect.h / 2;
-		dst.w = src.w;
-		dst.h = src.h;
+		if (animate)
+			tempRect = m_textureRect;
+		else
+			tempRect = m_secondTextureRect;
 
-		if(animate)
-			SDL_RenderCopy(renderer, m_texture, &src, &dst);
-		else if(!animate)
-			SDL_RenderCopy(renderer, m_SecondTexture, &src, &dst);
+		dst.x = m_position.m_x - tempRect.w / 2 * m_scale;
+		dst.y = m_position.m_y - tempRect.h / 2 * m_scale;
+		dst.w = tempRect.w * m_scale;
+		dst.h = tempRect.h * m_scale;
+
+		SDL_RenderCopy(renderer, m_texture, &tempRect, &dst);
+
 	}
 	else if(!m_disappear)
 	{
-		src.x = 0;
-		src.y = 0;
-		src.w = m_DeadRect.w;
-		src.h = m_DeadRect.h;
 
-		dst.x = m_position.m_x - m_DeadRect.w / 2;
-		dst.y = m_position.m_y - m_DeadRect.h / 2;
-		dst.w = src.w;
-		dst.h = src.h;
+		dst.x = m_position.m_x - m_deadTextureRect.w / 2 * m_scale;
+		dst.y = m_position.m_y - m_deadTextureRect.h / 2 * m_scale;
+		dst.w = m_deadTextureRect.w * m_scale;
+		dst.h = m_deadTextureRect.h * m_scale;
 
-		SDL_RenderCopy(renderer, m_DeadTexture, &src, &dst);
+		SDL_RenderCopy(renderer, m_texture, &m_deadTextureRect, &dst);
 	}
 
 	m_projectile.Render(renderer);

@@ -1,23 +1,18 @@
 #include"Player.h"
 
-Player::Player(const Vector& pos, const std::string& key, const float& scale, const std::string& playerDeadKey1, const std::string& playerDeadKey2)
-	:Entity(pos, key, scale, key), m_moveSpeed(4.f), m_projectile(Vector(-10.f, 0.f), Vector(0.f, 0.f), "Projectile", 3.f, "ProjectileDead", "Player")
+Player::Player(const Vector& pos, const SDL_Rect& playertextureRect, const float& scale, const SDL_Rect& playerDeadTexture1Rect, const SDL_Rect& playerDeadTexture2Rect)
+	:Entity(pos, playertextureRect, scale, "Player"), m_moveSpeed(4.f), m_projectile(Vector(-10.f, 0.f), Vector(0.f, 0.f), { 120, 54, 1, 6 }, 3.f, { 117, 45, 6, 8 }, "Player")
 {
 	m_dead = false;
 
-	m_deathTexture1 = AssetManager::GetInstance().Get(playerDeadKey1);
-	SDL_QueryTexture(m_deathTexture1, NULL, NULL, &m_deathRect1.w, &m_deathRect1.h);
-	m_deathRect1.x = 0;
-	m_deathRect1.y = 0;
-	m_deathRect1.w *= m_scale;
-	m_deathRect1.h *= m_scale;
 
-	m_deathTexture2 = AssetManager::GetInstance().Get(playerDeadKey2);
-	SDL_QueryTexture(m_deathTexture2, NULL, NULL, &m_deathRect2.w, &m_deathRect2.h);
-	m_deathRect2.x = 0;
-	m_deathRect2.y = 0;
-	m_deathRect2.w *= m_scale;
-	m_deathRect2.h *= m_scale;
+	m_deathRect1 = playerDeadTexture1Rect;
+
+
+	m_deathRect2 = playerDeadTexture2Rect;
+
+	m_lives = 3;
+
 
 	m_animate = false;
 }
@@ -25,26 +20,31 @@ Player::Player(const Vector& pos, const std::string& key, const float& scale, co
 void Player::Update()
 {
 	m_projectile.Update();
+
+	if (m_dead && !m_deadTimer.IsStarted())
+		m_deadTimer.Start();
+
+	if (m_deadTimer.GetTicks() > 2000.f)
+	{
+		if (m_lives <= 0)
+			Reset();
+		m_dead = false;
+		m_deadTimer.Stop();
+	}
 }
 
 void Player::Render(SDL_Renderer* renderer)
 {
-	SDL_Rect src;
 	SDL_Rect dst;
 
 	if (!m_dead)
 	{
-		src.x = 0;
-		src.y = 0;
-		src.w = m_textureRect.w;
-		src.h = m_textureRect.h;
+		dst.x = m_position.m_x - m_textureRect.w / 2 * m_scale;
+		dst.y = m_position.m_y - m_textureRect.h / 2 * m_scale;
+		dst.w = m_textureRect.w * m_scale;
+		dst.h = m_textureRect.h * m_scale;
 
-		dst.x = m_position.m_x - m_textureRect.w / 2;
-		dst.y = m_position.m_y - m_textureRect.h / 2;
-		dst.w = src.w;
-		dst.h = src.h;
-
-		SDL_RenderCopy(renderer, m_texture, &src, &dst);
+		SDL_RenderCopy(renderer, m_texture, &m_textureRect, &dst);
 	}
 	else if (m_dead)
 	{
@@ -57,33 +57,24 @@ void Player::Render(SDL_Renderer* renderer)
 			m_timer.Stop();
 		}
 
+		SDL_Rect tempRect;
 		if (m_animate)
-		{
-			src.x = 0;
-			src.y = 0;
-			src.w = m_deathRect1.w;
-			src.h = m_deathRect1.h;
+			tempRect = m_deathRect1;
+		else
+			tempRect = m_deathRect2;
 
-			dst.x = m_position.m_x - m_deathRect1.w / 2;
-			dst.y = m_position.m_y - m_deathRect1.h / 2;
-			dst.w = src.w;
-			dst.h = src.h;
-			SDL_RenderCopy(renderer, m_deathTexture1, &src, &dst);
-		}
 
-		else if (!m_animate)
-		{
-			src.x = 0;
-			src.y = 0;
-			src.w = m_deathRect2.w;
-			src.h = m_deathRect2.h;
+		//src.x = 0;
+		//src.y = 0;
+		//src.w = tempRect.w;
+		//src.h = tempRect.h;
 
-			dst.x = m_position.m_x - m_deathRect2.w / 2;
-			dst.y = m_position.m_y - m_deathRect2.h / 2;
-			dst.w = src.w;
-			dst.h = src.h;
-			SDL_RenderCopy(renderer, m_deathTexture2, &src, &dst);
-		}
+		dst.x = m_position.m_x - tempRect.w / 2 * m_scale;
+		dst.y = m_position.m_y - tempRect.h / 2 * m_scale;
+		dst.w = tempRect.w * m_scale;
+		dst.h = tempRect.h * m_scale;
+		SDL_RenderCopy(renderer, m_texture, &tempRect, &dst);
+
 	}
 
 	if(!m_projectile.m_disappear)
@@ -108,6 +99,11 @@ void Player::HandleEvents(SDL_Event& event)
 	}
 }
 
+void Player::Reset()
+{
+
+}
+
 void Player::Shoot()
 {
 	if (m_projectile.m_dead)
@@ -124,6 +120,7 @@ void Player::Dead()
 	if (!m_dead)
 	{
 		m_dead = true;
+		m_lives--;
 	}
 }
 

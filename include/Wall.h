@@ -17,7 +17,7 @@ enum WallPieceType
 class WallPiece : public Entity, public ICollidable
 {
 public:
-	WallPiece(const Vector& pos, const std::string& key, const WallPieceType& m_type);
+	WallPiece(const Vector& pos, const WallPieceType& m_type);
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
 	void OnCollision(ICollidable& otherCollidable) override;
@@ -36,7 +36,7 @@ class Wall
 {
 public:
 	Wall() = default;
-	void CreateWall(const Vector& pos, const std::string& key);
+	void CreateWall(const Vector& pos);
 	std::vector<WallPiece*>& GetPieces();
 
 public:

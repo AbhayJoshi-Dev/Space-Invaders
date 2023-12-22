@@ -9,18 +9,20 @@
 class Entity
 {
 public:
-	Entity(const Vector& pos, const std::string& key, const float& scale, const std::string& tag);
+	Entity(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const std::string& tag);
 	virtual ~Entity() = default;
 	virtual void Update();
 	virtual void Render(SDL_Renderer* renderer);
 	virtual void HandleEvents(SDL_Event& event);
 	virtual bool Destroy();
+	virtual void Reset();
+
 public:
 	Vector m_position;
 	SDL_Rect m_textureRect;
 	std::string m_tag;
+	float m_scale;
 
 protected:
-	float m_scale;
 	SDL_Texture* m_texture;
 };

@@ -11,7 +11,7 @@ class Enemy : public Entity, public ICollidable
 {
 public:
 	Enemy() = default;
-	Enemy(const Vector& pos, const std::string& key, const float& scale, const std::string& enemyDeadTextureKey, const std::string& enemySecondTextureKey);
+	Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const SDL_Rect& enemyDeadTextureRect, const SDL_Rect& enemySecondTextureRect);
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
 	void Shoot();
@@ -31,10 +31,8 @@ private:
 	bool canShoot;
 	float m_shootCounter;
 
-	SDL_Texture* m_SecondTexture;
-
-	SDL_Texture* m_DeadTexture;
-	SDL_Rect m_DeadRect;
+	SDL_Rect m_deadTextureRect;
+	SDL_Rect m_secondTextureRect;
 	
 	Timer m_deadTimer;
 };
