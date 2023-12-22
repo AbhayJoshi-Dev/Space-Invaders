@@ -10,10 +10,10 @@ add_subdirectory(external/SDL2_image)
 
 add_subdirectory(external/SDL2_mixer)
 
-file(GLOB GS_SOURCE_FILES src/*.cpp)
-file(GLOB GS_HEADER_FILES include/*.h)
+file(GLOB SI_SOURCE_FILES src/*.cpp)
+file(GLOB SI_HEADER_FILES include/*.h)
   
-add_executable(Space-Invaders ${GS_SOURCE_FILES} ${GS_HEADER_FILES})
+add_executable(Space-Invaders ${SI_SOURCE_FILES} ${SI_HEADER_FILES})
 
 target_include_directories(Space-Invaders PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/
                                             ${CMAKE_CURRENT_SOURCE_DIR}/external/SDL2/include/
