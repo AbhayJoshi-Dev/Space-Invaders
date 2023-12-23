@@ -5,8 +5,7 @@
 #include<SDL_image.h>
 #include<SDL_mixer.h>
 #include<memory>
-#include<stdexcept>
-#include<stdlib.h>
+#include<SDL_ttf.h>
 
 #include"Utils.h"
 #include"Player.h"
@@ -25,6 +24,7 @@ public:
 	void Render();
 	void CheckCollisions(std::vector<ICollidable*>& collidables);
 	void MoveAndShootEnemies();
+	void RenderText(const Vector& position, const char* str, const SDL_Color& color);
 
 private:
 	SDL_Window* m_window;
@@ -54,4 +54,7 @@ private:
 	bool m_return = false;
 	bool m_moveDown = false;
 	bool m_resetgame = false;
+
+	TTF_Font* m_font;
+	SDL_Color white = { 255, 255, 255, 255 };
 };

@@ -1,7 +1,7 @@
 #include"Wall.h"
 
-WallPiece::WallPiece(const Vector& pos, const WallPieceType& m_type)
-	:Entity(pos, { 0, 0, 0, 0 }, 3.f, "Wall"), m_pieceType(m_type)
+WallPiece::WallPiece(const Vector& pos, const WallPieceType& m_type, std::vector<WallPiece*>* referencesToPieces, float id)
+	:Entity(pos, { 0, 0, 0, 0 }, 3.f, "Wall"), m_pieceType(m_type), m_referencesToPieces(referencesToPieces), m_id(id)
 {
 	m_dead = false;
 	if (m_pieceType == Square)
@@ -96,19 +96,45 @@ void WallPiece::OnCollision(ICollidable& otherCollidable)
 	if (proj == NULL)
 		return;
 
-	if ((m_pieceType == CenterSquare || m_pieceType == Square) && m_flag == 4)
+	proj->m_dead = true;
+	proj->m_boundDead = true;
+
+	UpdateRect(proj->m_parentTag);
+
+}
+
+bool WallPiece::Destroy()
+{
+	return m_dead;
+}
+
+void WallPiece::UpdateRect(const std::string& parentTag)
+{
+	if (((m_pieceType == CenterSquare || m_pieceType == Square) && m_flag == 4))
 	{
-		proj->m_dead = true;
-		proj->m_boundDead = true;
+		std::vector<WallPiece*>::iterator it = std::find(m_referencesToPieces->begin(), m_referencesToPieces->end(), this);
+		
+		if (parentTag == "Player" && *it != m_referencesToPieces->back() && m_id != 2.2f)
+			(*++it)->UpdateRect(parentTag);
+		else if (parentTag == "Enemy" && *it != m_referencesToPieces->front() && m_id != 1.1f && m_id != 3.1f && m_id != 2.1f)
+			(*--it)->UpdateRect(parentTag);
+
+		m_flag++;
+		return;
+	}
+	else if ((m_pieceType == RightTriangle || m_pieceType == LeftTriangle) && m_flag == 2)
+	{
+		std::vector<WallPiece*>::iterator it = std::find((*m_referencesToPieces).begin(), (*m_referencesToPieces).end(), this);
+
+		if (parentTag == "Enemy" && *it != m_referencesToPieces->front())
+			(*--it)->UpdateRect(parentTag);
+
 		m_flag++;
 		return;
 	}
 
-	if (proj->m_parentTag == "Player")
+	if (parentTag == "Player")
 	{
-		proj->m_dead = true;
-		proj->m_boundDead = true;
-
 		if (m_pieceType == CenterSquare && m_flag == 0)
 		{
 			m_textureRect.x += 17;
@@ -121,11 +147,8 @@ void WallPiece::OnCollision(ICollidable& otherCollidable)
 			m_textureRect.y += 9;
 		}
 	}
-	else if (proj->m_parentTag == "Enemy")
+	else if (parentTag == "Enemy")
 	{
-		proj->m_dead = true;
-		proj->m_boundDead = true;
-
 		if (m_pieceType == CenterSquare && m_flag == 0)
 		{
 			m_textureRect.x += 26;
@@ -141,21 +164,22 @@ void WallPiece::OnCollision(ICollidable& otherCollidable)
 	m_flag++;
 }
 
-bool WallPiece::Destroy()
-{
-	return m_dead;
-}
-
 void Wall::CreateWall(const Vector& pos)
 {
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x, pos.m_y - 24.f), Square));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x, pos.m_y), CenterSquare));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y), Square));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y), Square));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y + 24.f), Square));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y + 24.f), Square));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 22.5f, pos.m_y - 22.5f), RightTriangle));
-	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 22.5f, pos.m_y - 22.5f), LeftTriangle));
+	m_pieces.reserve(24);
+	//first column
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y + 24.f), Square, &m_pieces, 1.1f));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 24.f, pos.m_y), Square, &m_pieces, 1.2f));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x - 22.5f, pos.m_y - 22.5f), LeftTriangle, &m_pieces, 1.3f));
+
+	//second column
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x, pos.m_y), CenterSquare, &m_pieces, 2.1f));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x, pos.m_y - 24.f), Square, &m_pieces, 2.2f));
+
+	//third column
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y + 24.f), Square, &m_pieces, 3.1f));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 24.f, pos.m_y), Square, &m_pieces, 3.2f));
+	m_pieces.push_back(new WallPiece(Vector(pos.m_x + 22.5f, pos.m_y - 22.5f), RightTriangle, &m_pieces, 3.3f));
 }
 
 std::vector<WallPiece*>& Wall::GetPieces()

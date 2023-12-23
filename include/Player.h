@@ -19,6 +19,7 @@ public:
 	void Shoot();
 	void Dead();
 	void OnCollision(ICollidable& otherCollidable) override;
+	void BoundCollision();
 
 public:
 	Projectile m_projectile;

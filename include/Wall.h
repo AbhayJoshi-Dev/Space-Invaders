@@ -17,11 +17,12 @@ enum WallPieceType
 class WallPiece : public Entity, public ICollidable
 {
 public:
-	WallPiece(const Vector& pos, const WallPieceType& m_type);
+	WallPiece(const Vector& pos, const WallPieceType& m_type, std::vector<WallPiece*>* m_referencesToPieces, float id);
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
 	void OnCollision(ICollidable& otherCollidable) override;
 	bool Destroy() override;
+	void UpdateRect(const std::string& parentTag);
 
 public:
 	bool m_dead;
@@ -29,6 +30,8 @@ public:
 private:
 	int m_flag;
 	WallPieceType m_pieceType;
+	std::vector<WallPiece*>* m_referencesToPieces;
+	float m_id;
 };
 
 

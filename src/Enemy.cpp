@@ -33,24 +33,6 @@ Enemy::Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale,
 
 void Enemy::Update()
 {
-	//if (!m_dead && m_projectile.m_Dead)
-	//{
-	//	if (utils::Random(0, 15) == 5)
-	//	{
-	//		if (canShoot)
-	//		{
-	//			canShoot = false;
-	//			//Shoot();
-	//		}
-	//	}
-	//}
-
-	//m_shootCounter += 1;
-	//if (m_shootCounter > 600)
-	//{
-	//	canShoot = true;
-	//	m_shootCounter = 0;
-	//}
 
 	if (m_dead)
 	{
@@ -62,11 +44,6 @@ void Enemy::Update()
 			m_disappear = true;
 		}
 	}
-	//else
-	//{
-	//	if(m_timer.IsStarted())
-		//	m_timer.Stop();
-//	}
 
 	m_projectile.Update();
 

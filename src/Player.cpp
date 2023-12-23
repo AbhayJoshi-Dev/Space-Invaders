@@ -1,7 +1,9 @@
 #include"Player.h"
 
 Player::Player(const Vector& pos, const SDL_Rect& playertextureRect, const float& scale, const SDL_Rect& playerDeadTexture1Rect, const SDL_Rect& playerDeadTexture2Rect)
-	:Entity(pos, playertextureRect, scale, "Player"), m_moveSpeed(4.f), m_projectile(Vector(-10.f, 0.f), Vector(0.f, 0.f), { 120, 54, 1, 6 }, 3.f, { 117, 45, 6, 8 }, "Player")
+	:Entity(pos, playertextureRect, scale, "Player"),
+	m_moveSpeed(4.5f),
+	m_projectile(Vector(-10.f, 0.f), Vector(0.f, 0.f), { 120, 54, 1, 6 }, 3.f, { 117, 45, 6, 8 }, "Player")
 {
 	m_dead = false;
 
@@ -11,7 +13,7 @@ Player::Player(const Vector& pos, const SDL_Rect& playertextureRect, const float
 
 	m_deathRect2 = playerDeadTexture2Rect;
 
-	m_lives = 3;
+	m_lives = 2;
 
 
 	m_animate = false;
@@ -31,6 +33,8 @@ void Player::Update()
 		m_dead = false;
 		m_deadTimer.Stop();
 	}
+
+	BoundCollision();
 }
 
 void Player::Render(SDL_Renderer* renderer)
@@ -139,4 +143,12 @@ void Player::OnCollision(ICollidable& otherCollidable)
 			proj->m_dead = true;
 		}
 	}
+}
+
+void Player::BoundCollision()
+{
+	if (m_position.m_x >= 650.f)
+		m_position.m_x = 650.f;
+	else if (m_position.m_x <= 40.f)
+		m_position.m_x = 40.f;
 }

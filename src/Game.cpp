@@ -1,6 +1,6 @@
-#include"Game.h"
-
 #include<functional>
+
+#include"Game.h"
 
 Game::Game()
 {
@@ -12,25 +12,29 @@ Game::Game()
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1028) < 0)
-		std::cout << "SDL_mixer could not initialize! SDL_mixer Error : " << Mix_GetError() << std::endl;
+		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+
+	if(TTF_Init() < 0)
+		std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << std::endl;
 
 	CreateWindow("Space Invaders", 880, 660);//320, 180
 
 	quit = false;
 
 	//Texture Loading
-
 	AssetManager::GetInstance().Load(m_renderer, "Sheet", "res/gfx/sheet.png");
 
 	//Audio Loading
-
 	SoundManager::GetInstance().Load("res/audio/shoot.wav", "Shoot");
 	SoundManager::GetInstance().Load("res/audio/invaderkilled.wav", "InvaderKilled");
+
+	//Loading Font
+	m_font = TTF_OpenFont("res/font/04B_03__.ttf", 40);
 
 	//instead of loading every texture, entity is just taking a SDL_Rect which tells where the texture is in the sheet
 
 	//creating entities                            playertexture        playerDeadtexture1   playerDeadtexture2
-	m_player = new Player(Vector(300.f, 640.f), { 115, 63, 11, 8 }, 3.f, { 132, 63, 13, 8 }, { 147, 63, 15, 8 });
+	m_player = new Player(Vector(300.f, 600.f), { 115, 63, 11, 8 }, 3.f, { 132, 63, 13, 8 }, { 147, 63, 15, 8 });
 
 	m_entities.push_back(m_player);
 
@@ -72,20 +76,20 @@ Game::Game()
 
 
 	//Walls
-	m_wall.CreateWall(Vector(150.f, 560.f));
-	m_wall.CreateWall(Vector(300.f, 560.f));
-	m_wall.CreateWall(Vector(450.f, 560.f));
-	m_wall.CreateWall(Vector(600.f, 560.f));
+	m_wall.CreateWall(Vector(150.f, 520.f));//150,  560
+	m_wall.CreateWall(Vector(300.f, 520.f));
+	m_wall.CreateWall(Vector(450.f, 520.f));
+	m_wall.CreateWall(Vector(600.f, 520.f));
 
 	for (auto& entity : m_wall.GetPieces())
 	{
 		m_entities.push_back(entity);
 	}
 
+	m_entities.push_back(new Entity( Vector(750.f, 600), { 115, 63, 11, 8 }, 3.f, "PlayerLiveUI" ));
+	m_entities.push_back(new Entity( Vector(800.f, 600), { 115, 63, 11, 8 }, 3.f, "PlayerLiveUI" ));
+
 	m_flag = m_entities.size();
-
-	m_wall.GetPieces().clear();
-
 }
 
 Game::~Game()
@@ -229,10 +233,10 @@ void Game::Update()
 
 	m_collidables.clear();
 
-//	std::vector<Entity*>::iterator newEnd = std::remove_if(m_entities.begin(), m_entities.end(), [](Entity* entity) { return entity->Destroy() ; });
+	//std::vector<Entity*>::iterator newEnd = std::remove_if(m_entities.begin(), m_entities.end(), [](Entity* entity) { return entity->Destroy() ; });
 
-//	for (std::vector<Entity*>::iterator it = newEnd; it != m_entities.end(); it++)
-//	{
+	//for (std::vector<Entity*>::iterator it = newEnd; it != m_entities.end(); it++)
+	//{
 	//	if ((*it)->Destroy())
 	//	{
 	//		delete* it;
@@ -260,14 +264,20 @@ void Game::Render()
 
 	for (auto& entity : m_entities)
 	{
-		if (m_player->m_dead)
-			SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+		//if (m_player->m_dead)
+		//	SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
 		entity->Render(m_renderer);
 	}
 
-	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-	SDL_RenderDrawLine(m_renderer, 700, 10, 700, 650);
-	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+	//SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+	//SDL_RenderDrawLine(m_renderer, 700, 10, 700, 650);
+	//SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+
+	RenderText(Vector(700.f, 35.f), "HIGH", white);
+	RenderText(Vector(750.f, 65.f), "SCORE", white);
+
+	RenderText(Vector(700.f, 250.f), "SCORE", white);
+
 
 	SDL_RenderPresent(m_renderer);
 }
@@ -299,7 +309,7 @@ void Game::CheckCollisions(std::vector<ICollidable*>& collidables)
 
 void Game::MoveAndShootEnemies()
 {
-	int maxdis = 680;
+	int maxdis = 650;
 	int mindis = 40;
 
 	int MoveDir = 1;
@@ -331,7 +341,7 @@ void Game::MoveAndShootEnemies()
 				}
 			}
 
-			//for shooting
+			//enemy shooting
 			if (!enemy->m_dead && enemy->m_projectile.m_dead)
 			{
 				if (enemy->m_position.m_x <= m_player->m_position.m_x + 25.f && enemy->m_position.m_x >= m_player->m_position.m_x - 25.f)
@@ -375,4 +385,26 @@ void Game::MoveAndShootEnemies()
 	m_enemies[m_flag]->Animate();
 	m_flag--;
 	m_enemies.clear();
+}
+
+void Game::RenderText(const Vector& position, const char* str, const SDL_Color& color)
+{
+	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(m_font, str, color);
+	SDL_Texture* message = SDL_CreateTextureFromSurface(m_renderer, surfaceMessage);
+
+	SDL_Rect src;
+	src.x = 0;
+	src.y = 0;
+	src.w = surfaceMessage->w;
+	src.h = surfaceMessage->h;
+
+	SDL_Rect dst;
+	dst.x = position.m_x;
+	dst.y = position.m_y;
+	dst.w = src.w;
+	dst.h = src.h;
+
+	SDL_RenderCopy(m_renderer, message, &src, &dst);
+	SDL_FreeSurface(surfaceMessage);
+	SDL_DestroyTexture(message);
 }

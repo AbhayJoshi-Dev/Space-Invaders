@@ -28,7 +28,14 @@ void Entity::Update()
 
 void Entity::Render(SDL_Renderer* renderer)
 {
+	SDL_Rect dst;
 
+	dst.x = m_position.m_x - m_textureRect.w / 2 * m_scale;
+	dst.y = m_position.m_y - m_textureRect.h / 2 * m_scale;
+	dst.w = m_textureRect.w * m_scale;
+	dst.h = m_textureRect.h * m_scale;
+
+	SDL_RenderCopy(renderer, m_texture, &m_textureRect, &dst);
 }
 
 void Entity::HandleEvents(SDL_Event& event)
