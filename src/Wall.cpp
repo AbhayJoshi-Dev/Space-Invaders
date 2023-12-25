@@ -110,6 +110,8 @@ bool WallPiece::Destroy()
 
 void WallPiece::UpdateRect(const std::string& parentTag)
 {
+
+	//this condition is just for a small visual thing for walls
 	if (((m_pieceType == CenterSquare || m_pieceType == Square) && m_flag == 4))
 	{
 		std::vector<WallPiece*>::iterator it = std::find(m_referencesToPieces->begin(), m_referencesToPieces->end(), this);

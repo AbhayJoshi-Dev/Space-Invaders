@@ -20,11 +20,13 @@ public:
 	void Dead();
 	void OnCollision(ICollidable& otherCollidable) override;
 	void BoundCollision();
+	void AddScore(int score);
 
 public:
 	Projectile m_projectile;
 	bool m_dead;
 	int m_lives;
+	int m_score;
 
 private:
 	float m_moveSpeed;

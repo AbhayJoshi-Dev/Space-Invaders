@@ -4,6 +4,7 @@
 #include<iostream>
 #include<cmath>
 
+
 #include"Entity.h"
 
 namespace utils
@@ -46,4 +47,6 @@ namespace utils
 		return RangeIntersect(e1.m_position.m_x - (float)e1.m_textureRect.w / 2.f * e1.m_scale, e1.m_position.m_x + (float)e1.m_textureRect.w / 2.f * e1.m_scale, e2.m_position.m_x - (float)e2.m_textureRect.w / 2.f * e2.m_scale, e2.m_position.m_x + (float)e2.m_textureRect.w / 2.f * e2.m_scale) &&
 			RangeIntersect(e1.m_position.m_y - (float)e1.m_textureRect.h / 2.f * e1.m_scale, e1.m_position.m_y + (float)e1.m_textureRect.h / 2.f * e1.m_scale, e2.m_position.m_y - (float)e2.m_textureRect.h / 2.f * e2.m_scale, e2.m_position.m_y + (float)e2.m_textureRect.h / 2.f * e2.m_scale);
 	}
+
+
 }

@@ -1,6 +1,6 @@
-#include<functional>
-
 #include"Game.h"
+#include"Event.h"
+#include"fstream"
 
 Game::Game()
 {
@@ -28,8 +28,13 @@ Game::Game()
 	SoundManager::GetInstance().Load("res/audio/shoot.wav", "Shoot");
 	SoundManager::GetInstance().Load("res/audio/invaderkilled.wav", "InvaderKilled");
 
+	m_font = nullptr;
+
 	//Loading Font
 	m_font = TTF_OpenFont("res/font/04B_03__.ttf", 40);
+
+	if (!m_font)
+		std::cout << "Font not loaded" << std::endl;
 
 	//instead of loading every texture, entity is just taking a SDL_Rect which tells where the texture is in the sheet
 
@@ -53,19 +58,19 @@ Game::Game()
 			switch (i)
 			{
 			case 0:                                                //enemytexture1        enemyDeadtexture   enemytexture2
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 1, 19, 6, 8 }, 3.f, { 103, 1, 7, 7 }, { 10, 19, 6, 8 }));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 1, 19, 6, 8 }, 3.f, { 103, 1, 7, 7 }, { 10, 19, 6, 8 }, 3, this));
 				break;
 			case 1:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 9, 7, 8 }, 3.f, { 103, 1, 7, 7 }, { 9, 9, 7, 8 }));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 9, 7, 8 }, 3.f, { 103, 1, 7, 7 }, { 9, 9, 7, 8 }, 2, this));
 				break;
 			case 2:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 45, 7, 8 }, 3.f, { 103, 37, 7, 7 }, { 9, 45, 7, 8 }));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 45, 7, 8 }, 3.f, { 103, 37, 7, 7 }, { 9, 45, 7, 8 }, 2, this));
 				break;
 			case 3:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 36, 8, 8 }, 3.f, { 103, 37, 7, 7 }, { 9, 36, 8, 8 }));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 36, 8, 8 }, 3.f, { 103, 37, 7, 7 }, { 9, 36, 8, 8 }, 1, this));
 				break;
 			case 4:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 72, 8, 8 }, 3.f, { 103, 73, 7, 7 }, { 9, 72, 8, 8 }));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 72, 8, 8 }, 3.f, { 103, 73, 7, 7 }, { 9, 72, 8, 8 }, 1, this));
 				break;
 			}
 			XPos += xSpacing;
@@ -90,6 +95,8 @@ Game::Game()
 	m_entities.push_back(new Entity( Vector(800.f, 600), { 115, 63, 11, 8 }, 3.f, "PlayerLiveUI" ));
 
 	m_flag = m_entities.size();
+
+	m_highScore = GetHighScore();
 }
 
 Game::~Game()
@@ -160,39 +167,42 @@ void Game::GameLoop()
 void Game::Update()
 {
 
-	if (m_player->m_lives <= 0)
+	if (m_player->m_lives < 0)
 		m_resetgame = true;
 		
 
 	srand((unsigned int)SDL_GetTicks());
 	utils::PrintFps();
 
-	for (const auto& entity : m_entities)
+	for (Entity* entity : m_entities)
 	{
 		entity->Update();
 
 		entity->HandleEvents(m_event);
 
-		auto collidable = dynamic_cast<ICollidable*>(entity);
+		//check for every if they are collidable and them into a vector
+		ICollidable* collidable = dynamic_cast<ICollidable*>(entity);
 		if (collidable)
 		{
-			//don't include dead enemies into the vector
-			// check this only if we are not deleting the allocated memory
+			//adding alive enemies to colllidable vector
 			if (entity->m_tag == "Enemy")
 			{
 				Enemy* enemy = (Enemy*)entity;
+
+				//don't include dead enemies into the vector
+				// check this only if we are not deleting the allocated memory
 				if (!enemy->m_dead)
-				{
 					m_collidables.push_back(collidable);
-				}
 			}
+			//adding alive enemies to colllidable vector
 			else if (entity->m_tag == "Wall")
 			{
 				WallPiece *wallPiece = (WallPiece*)entity;
+
+				//don't include dead enemies into the vector
+				// check this only if we are not deleting the allocated memory
 				if (!wallPiece->m_dead)
-				{
 					m_collidables.push_back(collidable);
-				}
 			}
 			else
 			{
@@ -200,32 +210,49 @@ void Game::Update()
 			}
 		}
 
+		if (!entity)
+			continue;
 
-		if (entity->m_tag == "Player")
-		{
-			Player* player = (Player*)entity;
-			if (!player->m_projectile.m_dead)
-			{
-
-				auto collidable = dynamic_cast<ICollidable*>(&player->m_projectile);
-
-				if (collidable)
-					m_collidables.push_back(collidable);
-			}
-		}
-		else if (entity->m_tag == "Enemy")
+		//adding enemy projectile in the collidable vector
+		if (entity->m_tag == "Enemy")
 		{
 			Enemy* enemy = (Enemy*)entity;
 			if (!enemy->m_projectile.m_dead)
 			{
-
-				auto collidable = dynamic_cast<ICollidable*>(&enemy->m_projectile);
-
-				if (collidable)
-					m_collidables.push_back(collidable);
+				ICollidable* col = dynamic_cast<ICollidable*>(&enemy->m_projectile);
+				if (col)
+					m_collidables.push_back(col);
 			}
 		}
+
+		while (!m_events.empty())
+		{
+			Event& event = m_events.back();
+			if (entity->m_tag == "Player")
+				event.action(*entity);
+				
+			m_events.pop_back();
+		}
+
+
+
+		/*for (Event& event : m_events)
+		{
+			if (entity->m_tag == "Player")
+				event.action(*entity);
+		}
+		m_events.clear();*/
 	}
+
+	//adding player projectile in the collidable vector
+	if (!m_player->m_projectile.m_dead)
+	{
+		ICollidable* collidable = dynamic_cast<ICollidable*>(&m_player->m_projectile);
+		if (collidable)
+			m_collidables.push_back(collidable);
+	}
+
+
 	this->CheckCollisions(m_collidables);
 
 	if(!m_player->m_dead)
@@ -233,6 +260,8 @@ void Game::Update()
 
 	m_collidables.clear();
 
+
+	//deleting heap allocated entitiies when they are dead
 	//std::vector<Entity*>::iterator newEnd = std::remove_if(m_entities.begin(), m_entities.end(), [](Entity* entity) { return entity->Destroy() ; });
 
 	//for (std::vector<Entity*>::iterator it = newEnd; it != m_entities.end(); it++)
@@ -244,17 +273,6 @@ void Game::Update()
 	//}
 
 	//m_entities.erase(newEnd, m_entities.end());
-
-	/*for (std::vector<Entity*>::iterator it = m_entities.begin(); it != m_entities.end(); )
-	{
-		if ((*it)->Destroy())
-		{
-			delete* it;
-			it = m_entities.erase(it);
-		}
-		else
-			it++;
-	}*/
 
 }
 
@@ -269,14 +287,26 @@ void Game::Render()
 		entity->Render(m_renderer);
 	}
 
-	//SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-	//SDL_RenderDrawLine(m_renderer, 700, 10, 700, 650);
-	//SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-
 	RenderText(Vector(700.f, 35.f), "HIGH", white);
 	RenderText(Vector(750.f, 65.f), "SCORE", white);
 
+	int score = m_player->m_score;
+
+	if (score > m_highScore)
+	{
+		SetHighScore(score);
+		m_highScore = score;
+	}
+
+	char buffer[10];
+	sprintf_s(buffer, "%d", m_highScore);
+
+	RenderText(Vector(750.f, 100.f), buffer, white);
+
+
 	RenderText(Vector(700.f, 250.f), "SCORE", white);
+	sprintf_s(buffer, "%d", score);
+	RenderText(Vector(750.f, 300.f), buffer, white);
 
 
 	SDL_RenderPresent(m_renderer);
@@ -293,10 +323,16 @@ void Game::CheckCollisions(std::vector<ICollidable*>& collidables)
 				auto entity1 = dynamic_cast<Entity*>(entityA);
 				auto entity2 = dynamic_cast<Entity*>(entityB);
 
+				//Don't check for Wall To Wall colision
 				if(entity1->m_tag == "Wall" && entity2->m_tag == "Wall")
-				{
 					continue;
-				}
+				//Don't check for Enemy To Enemy colision
+				if (entity1->m_tag == "Enemy" && entity2->m_tag == "Enemy")
+					continue;
+				//Don't check for Wall To Player colision
+				if ((entity1->m_tag == "Wall" && entity2->m_tag == "Player")
+					|| entity1->m_tag == "Player" && entity2->m_tag == "Wall")
+					continue;
 
 				if (utils::RectIntersect(*entity1, *entity2))
 				{
@@ -344,7 +380,8 @@ void Game::MoveAndShootEnemies()
 			//enemy shooting
 			if (!enemy->m_dead && enemy->m_projectile.m_dead)
 			{
-				if (enemy->m_position.m_x <= m_player->m_position.m_x + 25.f && enemy->m_position.m_x >= m_player->m_position.m_x - 25.f)
+				if (enemy->m_position.m_x <= m_player->m_position.m_x + 25.f 
+					&& enemy->m_position.m_x >= m_player->m_position.m_x - 25.f)
 				{
 					int r = utils::Random(0, 200);
 					if (r == 5)
@@ -365,14 +402,10 @@ void Game::MoveAndShootEnemies()
 		m_flag = m_enemies.size() - 1;
 	}
 
-
 	if (!m_return)
-	{
 		m_enemies[m_flag]->m_position.m_x += 10.f;
-	}
 	else
 		m_enemies[m_flag]->m_position.m_x -= 10.f;
-
 
 	if (m_moveDown)
 	{
@@ -381,7 +414,6 @@ void Game::MoveAndShootEnemies()
 			m_moveDown = false;
 	}
 
-
 	m_enemies[m_flag]->Animate();
 	m_flag--;
 	m_enemies.clear();
@@ -389,6 +421,9 @@ void Game::MoveAndShootEnemies()
 
 void Game::RenderText(const Vector& position, const char* str, const SDL_Color& color)
 {
+	if (!m_font)
+		return;
+
 	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(m_font, str, color);
 	SDL_Texture* message = SDL_CreateTextureFromSurface(m_renderer, surfaceMessage);
 
@@ -407,4 +442,25 @@ void Game::RenderText(const Vector& position, const char* str, const SDL_Color& 
 	SDL_RenderCopy(m_renderer, message, &src, &dst);
 	SDL_FreeSurface(surfaceMessage);
 	SDL_DestroyTexture(message);
+}
+
+void Game::AddEvent(const Event& event)
+{
+	m_events.push_back(event);
+}
+
+int Game::GetHighScore()
+{
+	int highScore;
+	std::ifstream input("data.txt");
+
+	input >> highScore;
+
+	return highScore;
+}
+
+void Game::SetHighScore(int score)
+{
+	std::ofstream output("data.txt");
+	output << score;
 }

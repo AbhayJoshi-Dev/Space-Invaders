@@ -11,15 +11,14 @@ class Enemy : public Entity, public ICollidable
 {
 public:
 	Enemy() = default;
-	Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const SDL_Rect& enemyDeadTextureRect, const SDL_Rect& enemySecondTextureRect);
+	Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const SDL_Rect& enemyDeadTextureRect, const SDL_Rect& enemySecondTextureRect, int enemyLevel, Game* game = nullptr);
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
 	void Shoot();
 	void Animate();
-
 	void OnCollision(ICollidable& otherCollidable) override;
-
 	bool Destroy() override;
+	void MakeEnemyRed();
 
 public:
 	Projectile m_projectile;
@@ -35,4 +34,6 @@ private:
 	SDL_Rect m_secondTextureRect;
 	
 	Timer m_deadTimer;
+	int m_enemyLevel;
+	bool m_makeRed;
 };

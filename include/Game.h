@@ -25,6 +25,9 @@ public:
 	void CheckCollisions(std::vector<ICollidable*>& collidables);
 	void MoveAndShootEnemies();
 	void RenderText(const Vector& position, const char* str, const SDL_Color& color);
+	void AddEvent(const Event& event);
+	int GetHighScore();
+	void SetHighScore(int score);
 
 private:
 	SDL_Window* m_window;
@@ -36,6 +39,7 @@ private:
 	std::vector<Entity*> m_entities;
 	std::vector<Enemy*> m_enemies;
 	std::vector<ICollidable*> m_collidables;
+	std::vector<Event> m_events;
 
 	const float TIMESTEP = 0.01f;
 	float m_accumulator = 0.f;
@@ -57,4 +61,7 @@ private:
 
 	TTF_Font* m_font;
 	SDL_Color white = { 255, 255, 255, 255 };
+
+	int m_highScore;
+
 };

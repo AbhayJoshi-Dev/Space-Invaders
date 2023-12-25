@@ -1,34 +1,23 @@
 #include"Enemy.h"
+#include"Player.h"
+#include"Event.h"
 
-Enemy::Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const SDL_Rect& enemyDeadTextureRect, const SDL_Rect& enemySecondTextureRect)
-	:Entity(pos, textureRect, scale, "Enemy"), m_projectile(Vector(-100.f, -100.f), Vector(0.f, 0.f), { 120, 54, 1, 6 }, 3.f, { 117, 45, 6, 8 }, "Enemy")
+Enemy::Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const SDL_Rect& enemyDeadTextureRect, const SDL_Rect& enemySecondTextureRect, int enemyLevel, Game* game)
+	:Entity(pos, textureRect, scale, "Enemy", game),
+	m_projectile(Vector(-100.f, -100.f), Vector(0.f, 0.f), { 120, 54, 1, 6 }, 3.f, { 117, 45, 6, 8 }, "Enemy"),
+	m_enemyLevel(enemyLevel)
 {
 	m_dead = false;
 	m_disappear = false;
-	/*m_DeadTexture = AssetManager::GetInstance().Get(enemyDeadTextureKey);
-
-	m_DeadRect.x = 0;
-	m_DeadRect.y = 0;
-
-	SDL_QueryTexture(m_DeadTexture, NULL, NULL, &m_DeadRect.w, &m_DeadRect.h);
-
-	m_DeadRect.w *= m_scale;
-	m_DeadRect.h *= m_scale;
-
-	m_SecondTexture = AssetManager::GetInstance().Get(enemySecondTextureKey);*/
-
 
 	m_deadTextureRect = enemyDeadTextureRect;
-	//m_deadTextureRect.w *= m_scale;
-	//m_deadTextureRect.h *= m_scale;
 
 	m_secondTextureRect = enemySecondTextureRect;
-	//m_secondTextureRect.w *= m_scale;
-	//m_secondTextureRect.h *= m_scale;
 
 	animate = false;
 	canShoot = true;
 	m_shootCounter = 0;
+	m_makeRed = false;
 }
 
 void Enemy::Update()
@@ -56,11 +45,23 @@ void Enemy::Render(SDL_Renderer* renderer)
 	if (!m_dead && !m_disappear)
 	{
 		SDL_Rect tempRect;
+		int y;
+		int x;
 
 		if (animate)
+		{
 			tempRect = m_textureRect;
+			if (m_makeRed)
+			{
+				y = 144 + m_textureRect.y;
+			}
+		}
 		else
+		{
 			tempRect = m_secondTextureRect;
+			x = 9 + m_textureRect.y;
+			y = 144 + m_textureRect.y;
+		}
 
 		dst.x = m_position.m_x - tempRect.w / 2 * m_scale;
 		dst.y = m_position.m_y - tempRect.h / 2 * m_scale;
@@ -112,6 +113,17 @@ void Enemy::OnCollision(ICollidable& otherCollidable)
 
 			m_dead = true;
 			proj->m_dead = true;
+
+			int score = 10 * m_enemyLevel;
+
+			Event scoreEvent;
+			scoreEvent.action = [score](Entity& entity)
+				{
+					Player* player = dynamic_cast<Player*>(&entity);
+					player->AddScore(score);
+				};
+
+			this->AddEvent(scoreEvent);
 		}
 	}
 }
@@ -119,4 +131,9 @@ void Enemy::OnCollision(ICollidable& otherCollidable)
 bool Enemy::Destroy()
 {
 	return (m_disappear && m_projectile.m_dead);
+}
+
+void Enemy::MakeEnemyRed()
+{
+	m_makeRed = true;
 }

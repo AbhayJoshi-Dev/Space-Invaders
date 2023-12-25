@@ -1,24 +1,14 @@
 #include"Entity.h"
+#include"Game.h"
+#include"Event.h"
 
-Entity::Entity(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const std::string& tag)
-	:m_position(pos), m_scale(scale), m_tag(tag)
+Entity::Entity(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const std::string& tag, Game* game)
+	:m_position(pos), m_scale(scale), m_tag(tag), m_game(game)
 {
 	m_texture = AssetManager::GetInstance().Get("Sheet");
 
 	if (tag != "Wall")
-	{
 		m_textureRect = textureRect;
-
-		//m_textureRect.x = textureRect.x;
-		//m_textureRect.y = textureRect.y;
-
-		//SDL_QueryTexture(m_texture, NULL, NULL, &m_textureRect.w, &m_textureRect.h);
-
-		//m_textureRect.w *= m_scale;
-		//m_textureRect.h *= m_scale;// *0.8f; //
-	}
-
-
 }
 
 void Entity::Update()
@@ -47,7 +37,13 @@ bool Entity::Destroy()
 {
 	return false;
 }
+
 void Entity::Reset()
 {
 
+}
+
+void Entity::AddEvent(const Event& event)
+{
+	m_game->AddEvent(event);
 }

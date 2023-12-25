@@ -6,16 +6,20 @@
 #include"Vector.h"
 #include"AssetManager.h"
 
+class Game;
+struct Event;
+
 class Entity
 {
 public:
-	Entity(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const std::string& tag);
+	Entity(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const std::string& tag, Game* game = nullptr);
 	virtual ~Entity() = default;
 	virtual void Update();
 	virtual void Render(SDL_Renderer* renderer);
 	virtual void HandleEvents(SDL_Event& event);
 	virtual bool Destroy();
 	virtual void Reset();
+	void AddEvent(const Event& event);
 
 public:
 	Vector m_position;
@@ -25,4 +29,7 @@ public:
 
 protected:
 	SDL_Texture* m_texture;
+
+private:
+	Game* m_game;
 };

@@ -7,15 +7,13 @@ Player::Player(const Vector& pos, const SDL_Rect& playertextureRect, const float
 {
 	m_dead = false;
 
-
 	m_deathRect1 = playerDeadTexture1Rect;
-
 
 	m_deathRect2 = playerDeadTexture2Rect;
 
 	m_lives = 2;
 
-
+	m_score = 0;
 	m_animate = false;
 }
 
@@ -28,8 +26,8 @@ void Player::Update()
 
 	if (m_deadTimer.GetTicks() > 2000.f)
 	{
-		if (m_lives <= 0)
-			Reset();
+		//if (m_lives < 0)
+		//	Reset();
 		m_dead = false;
 		m_deadTimer.Stop();
 	}
@@ -66,12 +64,6 @@ void Player::Render(SDL_Renderer* renderer)
 			tempRect = m_deathRect1;
 		else
 			tempRect = m_deathRect2;
-
-
-		//src.x = 0;
-		//src.y = 0;
-		//src.w = tempRect.w;
-		//src.h = tempRect.h;
 
 		dst.x = m_position.m_x - tempRect.w / 2 * m_scale;
 		dst.y = m_position.m_y - tempRect.h / 2 * m_scale;
@@ -151,4 +143,8 @@ void Player::BoundCollision()
 		m_position.m_x = 650.f;
 	else if (m_position.m_x <= 40.f)
 		m_position.m_x = 40.f;
+}
+void Player::AddScore(int score)
+{
+	m_score += score;
 }
