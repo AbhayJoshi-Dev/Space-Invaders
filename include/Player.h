@@ -11,7 +11,7 @@ class Player : public Entity, public ICollidable
 {
 public:
 	Player() = default;
-	Player(const Vector& pos, const SDL_Rect& playertextureRect, const float& scale, const SDL_Rect& playerDeadTexture1Rect, const SDL_Rect& playerDeadTexture2Rect);
+	Player(const Vector& pos, const SDL_Rect& playertextureRect, const float& scale, const SDL_Rect& playerDeadTexture1Rect, const SDL_Rect& playerDeadTexture2Rect, Game* game);
 	void Update() override;
 	void Render(SDL_Renderer* renderer) override;
 	void HandleEvents(SDL_Event& event) override;
@@ -24,7 +24,6 @@ public:
 
 public:
 	Projectile m_projectile;
-	bool m_dead;
 	int m_lives;
 	int m_score;
 
@@ -40,4 +39,19 @@ private:
 	bool m_animate;
 	Timer m_timer;
 	Timer m_deadTimer;
+};
+
+
+class PlayerHealthUI : public Entity
+{
+public:
+	PlayerHealthUI(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const std::string& tag, int deadTextureOffset, Game* game = nullptr);
+
+	void Render(SDL_Renderer* renderer) override;
+
+	void HealthRed();
+
+private:
+	bool m_makeRed;
+	int m_deadTextureOffset;
 };

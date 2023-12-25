@@ -2,7 +2,7 @@
 #include"Player.h"
 #include"Event.h"
 
-Enemy::Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const SDL_Rect& enemyDeadTextureRect, const SDL_Rect& enemySecondTextureRect, int enemyLevel, Game* game)
+Enemy::Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const SDL_Rect& enemyDeadTextureRect, int enemyLevel, Game* game)
 	:Entity(pos, textureRect, scale, "Enemy", game),
 	m_projectile(Vector(-100.f, -100.f), Vector(0.f, 0.f), { 120, 54, 1, 6 }, 3.f, { 117, 45, 6, 8 }, "Enemy"),
 	m_enemyLevel(enemyLevel)
@@ -12,7 +12,13 @@ Enemy::Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale,
 
 	m_deadTextureRect = enemyDeadTextureRect;
 
-	m_secondTextureRect = enemySecondTextureRect;
+	int offset = 144;
+	if (enemyLevel == 2)
+		offset += 9;
+	else if (enemyLevel == 3)
+		offset += 9 * 2;
+
+	m_redTextureRect = { textureRect.x, offset, textureRect.w, textureRect.h };
 
 	animate = false;
 	canShoot = true;
@@ -52,15 +58,17 @@ void Enemy::Render(SDL_Renderer* renderer)
 		{
 			tempRect = m_textureRect;
 			if (m_makeRed)
-			{
-				y = 144 + m_textureRect.y;
-			}
+				tempRect = m_redTextureRect;
 		}
 		else
 		{
-			tempRect = m_secondTextureRect;
-			x = 9 + m_textureRect.y;
-			y = 144 + m_textureRect.y;
+			tempRect = m_textureRect;
+			tempRect.x += 9;//for second enemy Texture
+			if (m_makeRed)
+			{
+				tempRect = m_redTextureRect;
+				tempRect.x = m_redTextureRect.x + 9;
+			}
 		}
 
 		dst.x = m_position.m_x - tempRect.w / 2 * m_scale;
@@ -73,13 +81,18 @@ void Enemy::Render(SDL_Renderer* renderer)
 	}
 	else if(!m_disappear)
 	{
+		SDL_Rect& tempRect = m_deadTextureRect;
 
-		dst.x = m_position.m_x - m_deadTextureRect.w / 2 * m_scale;
-		dst.y = m_position.m_y - m_deadTextureRect.h / 2 * m_scale;
-		dst.w = m_deadTextureRect.w * m_scale;
-		dst.h = m_deadTextureRect.h * m_scale;
+		if (m_makeRed)
+			tempRect.y = 145; //just for red enemy death effect if player dies after shooting
 
-		SDL_RenderCopy(renderer, m_texture, &m_deadTextureRect, &dst);
+		dst.x = m_position.m_x - tempRect.w / 2 * m_scale;
+		dst.y = m_position.m_y - tempRect.h / 2 * m_scale;
+		dst.w = tempRect.w * m_scale;
+		dst.h = tempRect.h * m_scale;
+
+
+		SDL_RenderCopy(renderer, m_texture, &tempRect, &dst);
 	}
 
 	m_projectile.Render(renderer);
@@ -100,31 +113,32 @@ void Enemy::Animate()
 
 void Enemy::OnCollision(ICollidable& otherCollidable)
 {
-	if (!m_dead)
+	if (m_dead)
+		return;
+
+	const auto& proj = dynamic_cast<Projectile*>(&otherCollidable);
+
+	if (proj == NULL)
+		return;
+
+	if (proj->m_parentTag == "Player")
 	{
-		const auto& proj = dynamic_cast<Projectile*>(&otherCollidable);
+		SoundManager::GetInstance().Play("InvaderKilled");
 
-		if (proj == NULL)
-			return;
+		m_dead = true;
+		proj->m_dead = true;
 
-		if (proj->m_parentTag == "Player")
-		{
-			SoundManager::GetInstance().Play("InvaderKilled");
+		int score = 10 * m_enemyLevel;
 
-			m_dead = true;
-			proj->m_dead = true;
+		Event scoreEvent;
+		scoreEvent.entityTag = "Player";
+		scoreEvent.action = [score](Entity& entity)
+			{
+				Player* player = dynamic_cast<Player*>(&entity);
+				player->AddScore(score);
+			};
 
-			int score = 10 * m_enemyLevel;
-
-			Event scoreEvent;
-			scoreEvent.action = [score](Entity& entity)
-				{
-					Player* player = dynamic_cast<Player*>(&entity);
-					player->AddScore(score);
-				};
-
-			this->AddEvent(scoreEvent);
-		}
+		this->AddEvent(scoreEvent);
 	}
 }
 
@@ -133,7 +147,7 @@ bool Enemy::Destroy()
 	return (m_disappear && m_projectile.m_dead);
 }
 
-void Enemy::MakeEnemyRed()
+void Enemy::EnemyRed()
 {
-	m_makeRed = true;
+	m_makeRed = !m_makeRed;
 }

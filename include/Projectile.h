@@ -14,7 +14,6 @@ public:
 	void OnCollision(ICollidable& otherCollidable) override;
 
 public:
-	bool m_dead;
 	Vector m_velocity;
 	std::string m_parentTag;
 	bool m_boundDead;

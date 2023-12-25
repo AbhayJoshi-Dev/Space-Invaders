@@ -26,6 +26,7 @@ public:
 	SDL_Rect m_textureRect;
 	std::string m_tag;
 	float m_scale;
+	bool m_dead;
 
 protected:
 	SDL_Texture* m_texture;

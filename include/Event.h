@@ -5,5 +5,6 @@
 
 struct Event
 {
+	std::string entityTag;
 	std::function<void(Entity& entity)> action;
 };

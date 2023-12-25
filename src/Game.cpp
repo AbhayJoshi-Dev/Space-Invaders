@@ -38,8 +38,8 @@ Game::Game()
 
 	//instead of loading every texture, entity is just taking a SDL_Rect which tells where the texture is in the sheet
 
-	//creating entities                            playertexture        playerDeadtexture1   playerDeadtexture2
-	m_player = new Player(Vector(300.f, 600.f), { 115, 63, 11, 8 }, 3.f, { 132, 63, 13, 8 }, { 147, 63, 15, 8 });
+	//Instantiate player                            playertexture        playerDeadtexture1   playerDeadtexture2
+	m_player = new Player(Vector(300.f, 600.f), { 115, 63, 11, 8 }, 3.f, { 132, 63, 13, 8 }, { 147, 63, 15, 8 }, this);
 
 	m_entities.push_back(m_player);
 
@@ -51,26 +51,27 @@ Game::Game()
 	int XPos = 50;
 	int YPos = 100;
 
+	//Instantiate all the enemies
 	for (int i = 0; i < maxEnemiesRows; i++)
 	{
 		for (int j = 0; j < maxEnemiesInARow; j++)
 		{
 			switch (i)
 			{
-			case 0:                                                //enemytexture1        enemyDeadtexture   enemytexture2
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 1, 19, 6, 8 }, 3.f, { 103, 1, 7, 7 }, { 10, 19, 6, 8 }, 3, this));
+			case 0:                                                //enemytexture1        enemyDeadtexture
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 1, 19, 6, 8 }, 3.f, { 103, 1, 7, 7 }, 3, this));
 				break;
 			case 1:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 9, 7, 8 }, 3.f, { 103, 1, 7, 7 }, { 9, 9, 7, 8 }, 2, this));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 9, 7, 8 }, 3.f, { 103, 1, 7, 7 }, 2, this));
 				break;
 			case 2:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 45, 7, 8 }, 3.f, { 103, 37, 7, 7 }, { 9, 45, 7, 8 }, 2, this));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 45, 7, 8 }, 3.f, { 103, 37, 7, 7 }, 2, this));
 				break;
 			case 3:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 36, 8, 8 }, 3.f, { 103, 37, 7, 7 }, { 9, 36, 8, 8 }, 1, this));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 36, 8, 8 }, 3.f, { 103, 37, 7, 7 }, 1, this));
 				break;
 			case 4:
-				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 72, 8, 8 }, 3.f, { 103, 73, 7, 7 }, { 9, 72, 8, 8 }, 1, this));
+				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 72, 8, 8 }, 3.f, { 103, 73, 7, 7 }, 1, this));
 				break;
 			}
 			XPos += xSpacing;
@@ -86,21 +87,30 @@ Game::Game()
 	m_wall.CreateWall(Vector(450.f, 520.f));
 	m_wall.CreateWall(Vector(600.f, 520.f));
 
+	//add walls to m_entities vector
 	for (auto& entity : m_wall.GetPieces())
 	{
 		m_entities.push_back(entity);
 	}
 
-	m_entities.push_back(new Entity( Vector(750.f, 600), { 115, 63, 11, 8 }, 3.f, "PlayerLiveUI" ));
-	m_entities.push_back(new Entity( Vector(800.f, 600), { 115, 63, 11, 8 }, 3.f, "PlayerLiveUI" ));
+	m_entities.push_back(new PlayerHealthUI( Vector(750.f, 600), { 115, 63, 11, 8 }, 3.f, "PlayerHealthUI", 166, this ));
+	m_entities.push_back(new PlayerHealthUI( Vector(800.f, 600), { 115, 63, 11, 8 }, 3.f, "PlayerHealthUI", 166, this ));
 
 	m_flag = m_entities.size();
 
 	m_highScore = GetHighScore();
+	m_livesUI = m_player->m_lives;
 }
 
 Game::~Game()
 {
+	for (Entity* entity : m_entities)
+	{
+		delete entity;
+	}
+	
+	m_entities.clear();
+
 	SDL_DestroyRenderer(m_renderer);
 	SDL_DestroyWindow(m_window);
 
@@ -166,16 +176,17 @@ void Game::GameLoop()
 
 void Game::Update()
 {
-
 	if (m_player->m_lives < 0)
 		m_resetgame = true;
-		
 
 	srand((unsigned int)SDL_GetTicks());
 	utils::PrintFps();
 
 	for (Entity* entity : m_entities)
 	{
+		if (!entity)
+			continue;
+
 		entity->Update();
 
 		entity->HandleEvents(m_event);
@@ -210,9 +221,6 @@ void Game::Update()
 			}
 		}
 
-		if (!entity)
-			continue;
-
 		//adding enemy projectile in the collidable vector
 		if (entity->m_tag == "Enemy")
 		{
@@ -225,23 +233,32 @@ void Game::Update()
 			}
 		}
 
-		while (!m_events.empty())
+		//make PlayerHealthUI dead if player lose a life
+		if (entity->m_tag == "PlayerHealthUI")
 		{
-			Event& event = m_events.back();
-			if (entity->m_tag == "Player")
+			if (entity->m_dead)
+				continue;
+
+			if (m_player->m_lives < m_livesUI)
+			{
+				entity->m_dead = true;
+				m_livesUI--;
+			}
+		}
+
+	}
+
+	//execute all the events
+	while (!m_events.empty())
+	{
+		Event& event = m_events.back();
+		for (Entity* entity : m_entities)
+		{
+			if (entity->m_tag == event.entityTag)
 				event.action(*entity);
 				
-			m_events.pop_back();
 		}
-
-
-
-		/*for (Event& event : m_events)
-		{
-			if (entity->m_tag == "Player")
-				event.action(*entity);
-		}
-		m_events.clear();*/
+		m_events.pop_back();
 	}
 
 	//adding player projectile in the collidable vector

@@ -18,6 +18,9 @@ void Entity::Update()
 
 void Entity::Render(SDL_Renderer* renderer)
 {
+	if (m_dead)
+		return;
+
 	SDL_Rect dst;
 
 	dst.x = m_position.m_x - m_textureRect.w / 2 * m_scale;

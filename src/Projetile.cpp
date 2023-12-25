@@ -81,16 +81,16 @@ void Projectile::Render(SDL_Renderer* renderer)
 
 void Projectile::OnCollision(ICollidable& otherCollidable)
 {
-	if (!m_dead)
-	{
-		const auto& proj = dynamic_cast<Projectile*>(&otherCollidable);
+	if (m_dead)
+		return;
 
-		if (proj == NULL)
-			return;
+	const auto& proj = dynamic_cast<Projectile*>(&otherCollidable);
 
-		proj->m_dead = true;
-		m_dead = true;
-		//proj->m_boundDead = true;
-		m_boundDead = true;
-	}
+	if (proj == NULL)
+		return;
+
+	proj->m_dead = true;
+	m_dead = true;
+	//proj->m_boundDead = true;
+	m_boundDead = true;
 }

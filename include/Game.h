@@ -63,5 +63,5 @@ private:
 	SDL_Color white = { 255, 255, 255, 255 };
 
 	int m_highScore;
-
+	int m_livesUI;
 };
