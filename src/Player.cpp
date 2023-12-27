@@ -4,8 +4,8 @@
 
 Player::Player(const Vector& pos, const SDL_Rect& playertextureRect, const float& scale, const SDL_Rect& playerDeadTexture1Rect, const SDL_Rect& playerDeadTexture2Rect, Game* game)
 	:Entity(pos, playertextureRect, scale, "Player", game),
-	m_moveSpeed(4.5f),
-	m_projectile(Vector(-10.f, 0.f), Vector(0.f, 0.f), { 120, 54, 1, 6 }, 3.f, { 117, 45, 6, 8 }, "Player")
+	m_moveSpeed(300.f),
+	m_projectile(Vector(-10.f, 0.f), 0.f, { 120, 54, 1, 6 }, 3.f, { 117, 45, 6, 8 }, "Player")
 {
 	m_dead = false;
 
@@ -17,11 +17,14 @@ Player::Player(const Vector& pos, const SDL_Rect& playertextureRect, const float
 
 	m_score = 0;
 	m_animate = false;
+	m_canShoot = true;
 }
 
-void Player::Update()
+void Player::Update(float dt)
 {
-	m_projectile.Update();
+	m_dt = dt;
+	m_projectile.Update(dt);
+	BoundCollision();
 
 	if (m_dead && !m_deadTimer.IsStarted())
 		m_deadTimer.Start();
@@ -30,7 +33,10 @@ void Player::Update()
 	{
 		m_lives--;
 		if (m_lives < 0)
-			Reset();
+		{
+			//Reset();
+			return;
+		}
 
 		m_dead = false;
 		m_deadTimer.Stop();
@@ -56,7 +62,6 @@ void Player::Update()
 		this->AddEvent(healthUIRedFalse);
 	}
 
-	BoundCollision();
 }
 
 void Player::Render(SDL_Renderer* renderer)
@@ -111,17 +116,21 @@ void Player::HandleEvents(SDL_Event& event)
 
 	if (keystate[SDL_SCANCODE_D] || keystate[SDL_SCANCODE_RIGHT])
 	{
-		m_position.m_x = m_position.m_x + m_moveSpeed;
+		m_position.m_x = m_position.m_x + m_moveSpeed * m_dt;
 	}
 	if (keystate[SDL_SCANCODE_A] || keystate[SDL_SCANCODE_LEFT])
 	{
-		m_position.m_x = m_position.m_x - m_moveSpeed;
+		m_position.m_x = m_position.m_x - m_moveSpeed * m_dt;
 	}
 }
 
 void Player::Reset()
 {
-	std::cout << "Reset" << std::endl;
+	m_dead = false;
+	m_lives = 2;
+	m_timer.Stop();
+	m_deadTimer.Stop();
+	m_score = 0;
 }
 
 void Player::Shoot()
@@ -131,15 +140,12 @@ void Player::Shoot()
 
 	m_projectile.m_dead = false;
 	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y - m_textureRect.h / 2 - m_projectile.m_textureRect.h / 2 - 1);
-	m_projectile.m_velocity.m_y = -10.0f;
+	m_projectile.m_velocity = -800.0f;
 	SoundManager::GetInstance().Play("Shoot");
 }
 
 void Player::Dead()
 {
-	if (m_dead)
-		return;
-
 	m_dead = true;
 
 	Event enemyRedTrue;
@@ -222,4 +228,10 @@ void PlayerHealthUI::Render(SDL_Renderer* renderer)
 void PlayerHealthUI::HealthRed()
 {
 	m_makeRed = !m_makeRed;
+}
+
+void PlayerHealthUI::Reset()
+{
+	m_dead = false;
+	m_makeRed = false;
 }

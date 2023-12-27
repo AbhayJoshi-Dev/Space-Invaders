@@ -4,7 +4,7 @@
 
 Enemy::Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const SDL_Rect& enemyDeadTextureRect, int enemyLevel, Game* game)
 	:Entity(pos, textureRect, scale, "Enemy", game),
-	m_projectile(Vector(-100.f, -100.f), Vector(0.f, 0.f), { 120, 54, 1, 6 }, 3.f, { 117, 45, 6, 8 }, "Enemy"),
+	m_projectile(Vector(-100.f, -100.f), 0.f, { 120, 54, 1, 6 }, 3.f, { 117, 45, 6, 8 }, "Enemy"),
 	m_enemyLevel(enemyLevel)
 {
 	m_dead = false;
@@ -26,10 +26,9 @@ Enemy::Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale,
 	m_makeRed = false;
 }
 
-void Enemy::Update()
+void Enemy::Update(float dt)
 {
-
-	if (m_dead)
+	if (m_dead && !m_disappear)
 	{
 		if (!m_deadTimer.IsStarted())
 			m_deadTimer.Start();
@@ -37,11 +36,11 @@ void Enemy::Update()
 		if (m_deadTimer.GetTicks() * 0.001f > 0.3f)
 		{
 			m_disappear = true;
+			m_deadTimer.Stop();
 		}
 	}
 
-	m_projectile.Update();
-
+	m_projectile.Update(dt);
 }
 
 void Enemy::Render(SDL_Renderer* renderer)
@@ -81,7 +80,7 @@ void Enemy::Render(SDL_Renderer* renderer)
 	}
 	else if(!m_disappear)
 	{
-		SDL_Rect& tempRect = m_deadTextureRect;
+		SDL_Rect tempRect = m_deadTextureRect;
 
 		if (m_makeRed)
 			tempRect.y = 145; //just for red enemy death effect if player dies after shooting
@@ -103,7 +102,7 @@ void Enemy::Shoot()
 {
 	m_projectile.m_dead = false;
 	m_projectile.m_position = Vector(m_position.m_x, m_position.m_y + m_textureRect.h / 2 + 10);
-	m_projectile.m_velocity.m_y = 7.0f;
+	m_projectile.m_velocity = 600.0f;
 }
 
 void Enemy::Animate()
@@ -150,4 +149,12 @@ bool Enemy::Destroy()
 void Enemy::EnemyRed()
 {
 	m_makeRed = !m_makeRed;
+}
+
+void Enemy::Reset()
+{
+	m_makeRed = false;
+	m_disappear = false;
+	m_dead = false;
+	m_position = Vector(-10.f, -10.f);
 }

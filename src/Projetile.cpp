@@ -1,6 +1,6 @@
 #include"Projectile.h"
 
-Projectile::Projectile(const Vector& pos, const Vector& velocity, const SDL_Rect& textureRect, float scale, const SDL_Rect& deadTextureRect, std::string parentTag)
+Projectile::Projectile(const Vector& pos, float velocity, const SDL_Rect& textureRect, float scale, const SDL_Rect& deadTextureRect, std::string parentTag)
 	:Entity(pos, textureRect, scale, "Projectile"), m_velocity(velocity), m_parentTag(parentTag)
 {
 	//m_texture = AssetManager::GetInstance().Get(key);
@@ -23,7 +23,7 @@ Projectile::Projectile(const Vector& pos, const Vector& velocity, const SDL_Rect
 	m_boundDead = false;
 }
 
-void Projectile::Update()
+void Projectile::Update(float dt)
 {
 	if (!m_dead)
 	{
@@ -32,7 +32,8 @@ void Projectile::Update()
 			m_timer.Stop();
 
 		m_disappear = false;
-		m_position = m_position + m_velocity;
+
+		m_position = m_position + Vector(0.f, m_velocity * dt);
 
 		if (m_position.m_y > 660 || m_position.m_y < 10)
 		{

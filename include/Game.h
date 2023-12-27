@@ -20,7 +20,7 @@ public:
 	~Game();
 	void CreateWindow(const char* title, int w, int h);
 	void GameLoop();
-	void Update();
+	void Update(float dt);
 	void Render();
 	void CheckCollisions(std::vector<ICollidable*>& collidables);
 	void MoveAndShootEnemies();
@@ -28,6 +28,8 @@ public:
 	void AddEvent(const Event& event);
 	int GetHighScore();
 	void SetHighScore(int score);
+	void RestartGame();
+	void SetEnemies();
 
 private:
 	SDL_Window* m_window;
@@ -49,7 +51,7 @@ private:
 	float m_alpha = 0.f;
 	int m_startTicks;
 	int m_frameTicks;
-	bool m_canShoot = true;
+	const int m_FPS = 60;
 
 	Player* m_player;
 
@@ -57,11 +59,20 @@ private:
 	int m_flag = 0;
 	bool m_return = false;
 	bool m_moveDown = false;
-	bool m_resetgame = false;
+	bool m_gameOver = false;
 
 	TTF_Font* m_font;
 	SDL_Color white = { 255, 255, 255, 255 };
 
 	int m_highScore;
 	int m_livesUI;
+
+	bool m_restartGame = false;
+	bool m_setEnemies = true;
+
+	Vector m_enemyStartingPos;
+	//int m_enemyXPos = 600;//50
+	//int m_enemyYPos = 300;//100
+	int m_enemyPosIndex = -1;
+	int m_enemyPosIndexJ = 0;
 };

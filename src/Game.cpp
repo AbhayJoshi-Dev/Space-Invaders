@@ -45,11 +45,11 @@ Game::Game()
 
 	int maxEnemiesInARow = 11;
 	int maxEnemiesRows = 5;
-	int xSpacing = 50;
-	int ySpacing = 40;
 
-	int XPos = 50;
-	int YPos = 100;
+	m_enemyPosIndexJ = maxEnemiesInARow;
+
+	int XPos = -10;//50
+	int YPos = -10;//100
 
 	//Instantiate all the enemies
 	for (int i = 0; i < maxEnemiesRows; i++)
@@ -74,10 +74,7 @@ Game::Game()
 				m_entities.push_back(new Enemy(Vector(XPos, YPos), { 0, 72, 8, 8 }, 3.f, { 103, 73, 7, 7 }, 1, this));
 				break;
 			}
-			XPos += xSpacing;
 		}
-		YPos += ySpacing;
-		XPos = 50;
 	}
 
 
@@ -100,6 +97,7 @@ Game::Game()
 
 	m_highScore = GetHighScore();
 	m_livesUI = m_player->m_lives;
+	m_enemyStartingPos = Vector(600, 300);
 }
 
 Game::~Game()
@@ -149,14 +147,18 @@ void Game::GameLoop()
 			{
 				if (m_event.type == SDL_QUIT)
 					quit = true;
-				if (!m_player->m_dead && m_canShoot && m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_x)
+				if (!m_player->m_dead && m_player->m_canShoot && m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_x && !m_setEnemies)
 				{
 					m_player->Shoot();
-					m_canShoot = false;
+					m_player->m_canShoot = false;
 				}
 				if (m_event.type == SDL_KEYUP && m_event.key.keysym.sym == SDLK_x)
 				{
-					m_canShoot = true;
+					m_player->m_canShoot = true;
+				}
+				if (m_gameOver && m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_r)
+				{
+					RestartGame();
 				}
 			}
 
@@ -164,30 +166,34 @@ void Game::GameLoop()
 		}
 		m_alpha = m_accumulator / TIMESTEP;
 
-		Update();
+	//	std::cout << m_frameTime << std::endl;
+		Update(m_frameTime);
 		Render();
 
 		m_frameTicks = SDL_GetTicks() - m_startTicks;
-		if (m_frameTicks < 1000 / 60)
-			SDL_Delay(1000 / 60 - m_frameTicks);
+		if (m_frameTicks < 1000 / m_FPS)
+			SDL_Delay(1000 / m_FPS - m_frameTicks);
 
 	}
 }
 
-void Game::Update()
+void Game::Update(float dt)
 {
 	if (m_player->m_lives < 0)
-		m_resetgame = true;
+		m_gameOver = true;
 
 	srand((unsigned int)SDL_GetTicks());
 	utils::PrintFps();
+
+	if (m_setEnemies)
+		SetEnemies();
 
 	for (Entity* entity : m_entities)
 	{
 		if (!entity)
 			continue;
 
-		entity->Update();
+		entity->Update(dt);
 
 		entity->HandleEvents(m_event);
 
@@ -272,7 +278,7 @@ void Game::Update()
 
 	this->CheckCollisions(m_collidables);
 
-	if(!m_player->m_dead)
+	if(!m_player->m_dead && !m_setEnemies)
 		MoveAndShootEnemies();
 
 	m_collidables.clear();
@@ -301,6 +307,10 @@ void Game::Render()
 	{
 		//if (m_player->m_dead)
 		//	SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+
+		if (m_gameOver && entity->m_tag == "Player")
+			continue;
+
 		entity->Render(m_renderer);
 	}
 
@@ -320,6 +330,11 @@ void Game::Render()
 
 	RenderText(Vector(750.f, 100.f), buffer, white);
 
+	if (m_gameOver)
+	{
+		RenderText(Vector(262, 125), "GAME OVER", white);
+		RenderText(Vector(240, 190), "R TO RESTART", white);
+	}
 
 	RenderText(Vector(700.f, 250.f), "SCORE", white);
 	sprintf_s(buffer, "%d", score);
@@ -480,4 +495,61 @@ void Game::SetHighScore(int score)
 {
 	std::ofstream output("data.txt");
 	output << score;
+}
+
+void Game::RestartGame()
+{
+	std::cout << "Game Restarted" << std::endl;
+
+	for (Entity* entity : m_entities)
+	{
+		//entity->m_dead = false;
+		entity->Reset();
+	}
+	
+	m_livesUI = m_player->m_lives;
+
+	m_gameOver = false;
+
+	m_enemyPosIndex = m_entities.size();
+	m_enemyPosIndexJ = 11;
+	m_enemyStartingPos = Vector(600, 300);
+	m_setEnemies = true;
+
+	m_flag = 0;
+	m_return = false;
+	m_moveDown = false;
+}
+
+void Game::SetEnemies()
+{
+	int maxEnemiesInARow = 11;
+	int maxRows = 5;
+	int xSpacing = 50;
+	int ySpacing = 40;
+
+	if (m_enemyPosIndex >= m_entities.size() || m_enemyPosIndex < 0)
+		m_enemyPosIndex = m_entities.size() - 1;
+
+
+	if (m_entities[m_enemyPosIndex]->m_tag != "Enemy")
+	{
+		m_enemyPosIndex--;
+		if (m_enemyPosIndex < 0)
+			m_setEnemies = false;
+		return;
+	}
+
+	m_entities[m_enemyPosIndex]->m_position = Vector(m_enemyStartingPos.m_x, m_enemyStartingPos.m_y);
+	m_enemyStartingPos.m_x -= xSpacing;
+	m_enemyPosIndexJ--;
+	if (m_enemyPosIndexJ <= 0)
+	{
+		m_enemyPosIndexJ = maxEnemiesInARow;
+		m_enemyStartingPos.m_y -= ySpacing;
+		m_enemyStartingPos.m_x = 600;
+	}
+	m_enemyPosIndex--;
+	if (m_enemyPosIndex < 0)
+		m_setEnemies = false;
 }

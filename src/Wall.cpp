@@ -4,6 +4,17 @@ WallPiece::WallPiece(const Vector& pos, const WallPieceType& m_type, std::vector
 	:Entity(pos, { 0, 0, 0, 0 }, 3.f, "Wall"), m_pieceType(m_type), m_referencesToPieces(referencesToPieces), m_id(id)
 {
 	m_dead = false;
+
+	SetTextureRect();
+
+	m_flag = 0;
+
+	//m_textureRect.w *= 3;
+	//m_textureRect.h *= 3;
+}
+
+void WallPiece::SetTextureRect()
+{
 	if (m_pieceType == Square)
 	{
 		m_textureRect.x = 137;
@@ -11,14 +22,14 @@ WallPiece::WallPiece(const Vector& pos, const WallPieceType& m_type, std::vector
 		m_textureRect.w = 8;
 		m_textureRect.h = 8;
 	}
-	else if(m_pieceType == RightTriangle)
+	else if (m_pieceType == RightTriangle)
 	{
 		m_textureRect.x = 182;
 		m_textureRect.y = 154;
 		m_textureRect.w = 7;
 		m_textureRect.h = 7;
 	}
-	else if(m_pieceType == LeftTriangle)
+	else if (m_pieceType == LeftTriangle)
 	{
 		m_textureRect.x = 183;
 		m_textureRect.y = 127;
@@ -32,14 +43,9 @@ WallPiece::WallPiece(const Vector& pos, const WallPieceType& m_type, std::vector
 		m_textureRect.w = 8;
 		m_textureRect.h = 11;
 	}
-
-	m_flag = 0;
-
-	//m_textureRect.w *= 3;
-	//m_textureRect.h *= 3;
 }
 
-void WallPiece::Update()
+void WallPiece::Update(float dt)
 {
 
 	if (m_pieceType == Square || m_pieceType == CenterSquare)
@@ -53,8 +59,8 @@ void WallPiece::Update()
 			m_dead = true;
 	}
 
-	if (m_flag > 0 && m_pieceType == CenterSquare)
-		m_pieceType = Square;
+	//if (m_flag > 0 && m_pieceType == CenterSquare)
+	//	m_pieceType = Square;
 }
 
 void WallPiece::Render(SDL_Renderer* renderer)
@@ -164,6 +170,13 @@ void WallPiece::UpdateRect(const std::string& parentTag)
 		}
 	}
 	m_flag++;
+}
+
+void WallPiece::Reset()
+{
+	m_flag = 0;
+	SetTextureRect();
+	m_dead = false;
 }
 
 void Wall::CreateWall(const Vector& pos)

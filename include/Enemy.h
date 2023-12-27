@@ -12,13 +12,14 @@ class Enemy : public Entity, public ICollidable
 public:
 	Enemy() = default;
 	Enemy(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const SDL_Rect& enemyDeadTextureRect, int enemyLevel, Game* game = nullptr);
-	void Update() override;
+	void Update(float dt) override;
 	void Render(SDL_Renderer* renderer) override;
 	void Shoot();
 	void Animate();
 	void OnCollision(ICollidable& otherCollidable) override;
 	bool Destroy() override;
 	void EnemyRed();
+	void Reset() override;
 
 public:
 	Projectile m_projectile;

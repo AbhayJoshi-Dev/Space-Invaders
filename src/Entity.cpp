@@ -11,7 +11,7 @@ Entity::Entity(const Vector& pos, const SDL_Rect& textureRect, const float& scal
 		m_textureRect = textureRect;
 }
 
-void Entity::Update()
+void Entity::Update(float dt)
 {
 
 }
@@ -43,7 +43,7 @@ bool Entity::Destroy()
 
 void Entity::Reset()
 {
-
+	m_dead = false;
 }
 
 void Entity::AddEvent(const Event& event)

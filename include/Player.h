@@ -12,7 +12,7 @@ class Player : public Entity, public ICollidable
 public:
 	Player() = default;
 	Player(const Vector& pos, const SDL_Rect& playertextureRect, const float& scale, const SDL_Rect& playerDeadTexture1Rect, const SDL_Rect& playerDeadTexture2Rect, Game* game);
-	void Update() override;
+	void Update(float dt) override;
 	void Render(SDL_Renderer* renderer) override;
 	void HandleEvents(SDL_Event& event) override;
 	void Reset() override;
@@ -26,6 +26,7 @@ public:
 	Projectile m_projectile;
 	int m_lives;
 	int m_score;
+	bool m_canShoot;
 
 private:
 	float m_moveSpeed;
@@ -39,6 +40,7 @@ private:
 	bool m_animate;
 	Timer m_timer;
 	Timer m_deadTimer;
+	float m_dt;
 };
 
 
@@ -50,6 +52,7 @@ public:
 	void Render(SDL_Renderer* renderer) override;
 
 	void HealthRed();
+	void Reset() override;
 
 private:
 	bool m_makeRed;

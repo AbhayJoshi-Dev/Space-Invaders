@@ -14,7 +14,7 @@ class Entity
 public:
 	Entity(const Vector& pos, const SDL_Rect& textureRect, const float& scale, const std::string& tag, Game* game = nullptr);
 	virtual ~Entity() = default;
-	virtual void Update();
+	virtual void Update(float dt);
 	virtual void Render(SDL_Renderer* renderer);
 	virtual void HandleEvents(SDL_Event& event);
 	virtual bool Destroy();

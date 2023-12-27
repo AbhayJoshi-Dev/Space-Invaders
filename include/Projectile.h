@@ -8,13 +8,13 @@
 class Projectile : public Entity, public ICollidable
 {
 public:
-	Projectile(const Vector& pos, const Vector& velocity, const SDL_Rect& textureRect, float scale, const SDL_Rect& deadTextureRect, std::string parentTag);
-	void Update() override;
+	Projectile(const Vector& pos, float velocity, const SDL_Rect& textureRect, float scale, const SDL_Rect& deadTextureRect, std::string parentTag);
+	void Update(float dt) override;
 	void Render(SDL_Renderer* renderer) override;
 	void OnCollision(ICollidable& otherCollidable) override;
 
 public:
-	Vector m_velocity;
+	float m_velocity;
 	std::string m_parentTag;
 	bool m_boundDead;
 	bool m_disappear;
