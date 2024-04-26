@@ -8,8 +8,8 @@ SoundManager::~SoundManager()
 
 SoundManager& SoundManager::GetInstance()
 {
-	static SoundManager* instance = new SoundManager;
-	return *instance;
+	static SoundManager instance;
+	return instance;
 }
 
 void SoundManager::Load(const char* path, const std::string& key)

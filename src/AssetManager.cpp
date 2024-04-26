@@ -10,9 +10,9 @@ AssetManager::~AssetManager()
 
 AssetManager& AssetManager::GetInstance()
 {
-	static AssetManager* instance = new AssetManager;
+	static AssetManager instance;
 
-	return *instance;
+	return instance;
 }
 
 void AssetManager::Load(SDL_Renderer* renderer, const std::string& key, const std::string& filePath)
