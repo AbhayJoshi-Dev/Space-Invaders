@@ -1,6 +1,6 @@
 # Space Invaders
 
-A clone of Space Invaders created using C++ and [SDL2](https://www.libsdl.org/)
+A clone of [Space Invaders](https://en.wikipedia.org/wiki/Space_Invaders) written in C++ with [SDL2](https://www.libsdl.org/)
 
 ## Demo
 ![](https://i.imgur.com/PRZ4INP.gif)
@@ -14,29 +14,23 @@ A clone of Space Invaders created using C++ and [SDL2](https://www.libsdl.org/)
 
 - Steps
 
-    ```cmd
+    ```sh
     # Clone this project along with submodules
-    $ git clone --recursive https://github.com/AbhayJoshi-Dev/Space-Invaders
+    git clone --recursive https://github.com/AbhayJoshi-Dev/Space-Invaders
 
     # Go to project root
-    $ cd Space-Invaders
-
-    # Pull SDL and SDL_image as submodule (if you cloned without --recursive flag)
-    $ git submodule update --init
+    cd Space-Invaders
 
     # Create a folder for build
-    $ mkdir build
+    mkdir build
 
     # Go to build folder
-    $ cd build
+    cd build
 
     # Generate project files
-    $ cmake ..
+    cmake .. # add -DBUILD_SHARED_LIBS=OFF to link statically
+
+    # Build project
+    cmake --build .
     ```
-
-- This will generate project files using default cmake generator for your platform. For example:
-
-  - on `Windows` with `Visual Studio` installed, it will generate a `.sln`
-  - on `Linux` with `make` installed, it will generate a `Makefile`
-  - on `Mac` with `xcode` installed, it will generate a `.xcodeproj`
   
